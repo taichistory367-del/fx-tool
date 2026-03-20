@@ -7,33 +7,38 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const rawPair = req.query.pair || 'USD/JPY';
+  const rawPair = req.query.pair || 'USDJPY';
 
   const symbolMap = {
-    'USD/JPY': 'USD/JPY',
-    'EUR/USD': 'EUR/USD',
-    'GBP/USD': 'GBP/USD',
-    'AUD/USD': 'AUD/USD',
-    'NZD/USD': 'NZD/USD',
-    'USD/CAD': 'USD/CAD',
-    'AUD/CAD': 'AUD/CAD',
-    'USD/CHF': 'USD/CHF',
-    'EUR/AUD': 'EUR/AUD',
-    'EUR/JPY': 'EUR/JPY',
-    'GBP/JPY': 'GBP/JPY',
-    'AUD/JPY': 'AUD/JPY',
-    'NZD/JPY': 'NZD/JPY',
-    'CAD/JPY': 'CAD/JPY',
-    'CHF/JPY': 'CHF/JPY',
-    'GOLD': 'XAU/USD',
-    'SILVER': 'XAG/USD',
-    'JP225Cash': 'N225',
-    'US30Cash': 'DJI',
-    'US100Cash': 'IXIC',
-    'US500Cash': 'SPX',
-    'BTC/USD': 'BTC/USD',
-    'ETH/USD': 'ETH/USD',
-    'OILCash': 'WTI'
+    USDJPY: 'USD/JPY',
+    EURJPY: 'EUR/JPY',
+    GBPJPY: 'GBP/JPY',
+    AUDJPY: 'AUD/JPY',
+    NZDJPY: 'NZD/JPY',
+    CADJPY: 'CAD/JPY',
+    CHFJPY: 'CHF/JPY',
+
+    EURUSD: 'EUR/USD',
+    GBPUSD: 'GBP/USD',
+    AUDUSD: 'AUD/USD',
+    NZDUSD: 'NZD/USD',
+    USDCAD: 'USD/CAD',
+    AUDCAD: 'AUD/CAD',
+    USDCHF: 'USD/CHF',
+    EURAUD: 'EUR/AUD',
+
+    GOLD: 'XAU/USD',
+    SILVER: 'XAG/USD',
+
+    JP225: 'N225',
+    US30: 'DJI',
+    US100: 'IXIC',
+    US500: 'SPX',
+
+    BTCUSD: 'BTC/USD',
+    ETHUSD: 'ETH/USD',
+
+    OIL: 'WTI'
   };
 
   const symbol = symbolMap[rawPair];
@@ -86,3 +91,5 @@ export default async function handler(req, res) {
       error: 'サーバーエラー',
       message: error.message
     });
+  }
+}

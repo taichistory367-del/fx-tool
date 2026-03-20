@@ -321,7 +321,7 @@ input[type="range"]::-moz-range-thumb {
 .detail-row .dv { font-family: var(--mono); font-size: 13px; color: var(--text); font-weight: 500; }
 
 .warn-box { display: none; margin-top: 10px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.5; }
-.warn-box.risk-high    { display: block; background: var(--warn-dim);   border: 1px solid #f0b84a50; color: var(--warn); }
+.warn-box.risk-high { display: block; background: var(--warn-dim); border: 1px solid #f0b84a50; color: var(--warn); }
 .warn-box.risk-very-high { display: block; background: var(--danger-dim); border: 1px solid #f0606050; color: var(--danger); }
 
 .reset-btn {
@@ -340,6 +340,11 @@ input[type="range"]::-moz-range-thumb {
 .reset-btn:hover { border-color: var(--border2); color: var(--text2); }
 
 .footer { margin-top: 1.5rem; text-align: center; font-size: 11px; color: var(--text3); line-height: 1.8; }
+
+@media (max-width: 480px) {
+  .pair-grid { grid-template-columns: repeat(3,1fr); }
+  .result-main, .price-row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -351,19 +356,18 @@ input[type="range"]::-moz-range-thumb {
     <p>口座残高とリスク設定から、適正なロット数を瞬時に算出します。</p>
   </div>
 
-  <!-- 銘柄選択 -->
   <div class="card">
     <div class="card-title">銘柄を選択</div>
 
     <div class="pair-category">FX — JPY ペア</div>
     <div class="pair-grid">
       <button class="pair-btn active" data-pair="USDJPY" onclick="selectPair(this)">USD/JPY</button>
-      <button class="pair-btn" data-pair="EURJPY"  onclick="selectPair(this)">EUR/JPY</button>
-      <button class="pair-btn" data-pair="GBPJPY"  onclick="selectPair(this)">GBP/JPY</button>
-      <button class="pair-btn" data-pair="AUDJPY"  onclick="selectPair(this)">AUD/JPY</button>
-      <button class="pair-btn" data-pair="NZDJPY"  onclick="selectPair(this)">NZD/JPY</button>
-      <button class="pair-btn" data-pair="CADJPY"  onclick="selectPair(this)">CAD/JPY</button>
-      <button class="pair-btn" data-pair="CHFJPY"  onclick="selectPair(this)">CHF/JPY</button>
+      <button class="pair-btn" data-pair="EURJPY" onclick="selectPair(this)">EUR/JPY</button>
+      <button class="pair-btn" data-pair="GBPJPY" onclick="selectPair(this)">GBP/JPY</button>
+      <button class="pair-btn" data-pair="AUDJPY" onclick="selectPair(this)">AUD/JPY</button>
+      <button class="pair-btn" data-pair="NZDJPY" onclick="selectPair(this)">NZD/JPY</button>
+      <button class="pair-btn" data-pair="CADJPY" onclick="selectPair(this)">CAD/JPY</button>
+      <button class="pair-btn" data-pair="CHFJPY" onclick="selectPair(this)">CHF/JPY</button>
     </div>
 
     <div class="pair-category">FX — USD ペア / クロス</div>
@@ -380,13 +384,13 @@ input[type="range"]::-moz-range-thumb {
 
     <div class="pair-category">貴金属 / 指数 / コモディティ</div>
     <div class="pair-grid">
-      <button class="pair-btn" data-pair="GOLD"   onclick="selectPair(this)">GOLD</button>
+      <button class="pair-btn" data-pair="GOLD" onclick="selectPair(this)">GOLD</button>
       <button class="pair-btn" data-pair="SILVER" onclick="selectPair(this)">SILVER</button>
-      <button class="pair-btn" data-pair="JP225"  onclick="selectPair(this)">JP225</button>
-      <button class="pair-btn" data-pair="US30"   onclick="selectPair(this)">US30</button>
-      <button class="pair-btn" data-pair="US100"  onclick="selectPair(this)">US100</button>
-      <button class="pair-btn" data-pair="US500"  onclick="selectPair(this)">US500</button>
-      <button class="pair-btn" data-pair="OIL"    onclick="selectPair(this)">OIL</button>
+      <button class="pair-btn" data-pair="JP225" onclick="selectPair(this)">JP225</button>
+      <button class="pair-btn" data-pair="US30" onclick="selectPair(this)">US30</button>
+      <button class="pair-btn" data-pair="US100" onclick="selectPair(this)">US100</button>
+      <button class="pair-btn" data-pair="US500" onclick="selectPair(this)">US500</button>
+      <button class="pair-btn" data-pair="OIL" onclick="selectPair(this)">OIL</button>
     </div>
 
     <div class="pair-category">仮想通貨</div>
@@ -396,7 +400,6 @@ input[type="range"]::-moz-range-thumb {
     </div>
   </div>
 
-  <!-- リスク設定 -->
   <div class="card">
     <div class="card-title">リスク設定を入力</div>
     <div class="fields">
@@ -415,7 +418,7 @@ input[type="range"]::-moz-range-thumb {
           <div class="risk-val" id="riskDisplay">2.0<span>%</span></div>
         </div>
         <input type="range" id="risk" min="0.5" max="10" step="0.5" value="2"
-               oninput="document.getElementById('riskDisplay').innerHTML=parseFloat(this.value).toFixed(1)+'<span>%</span>'">
+          oninput="document.getElementById('riskDisplay').innerHTML=parseFloat(this.value).toFixed(1)+'<span>%</span>'">
         <div class="range-labels">
           <span>0.5%（保守）</span><span>2%（標準）</span><span>10%（高リスク）</span>
         </div>
@@ -424,11 +427,10 @@ input[type="range"]::-moz-range-thumb {
       <div>
         <div class="field-label">損切り幅の入力方法</div>
         <div class="sl-tabs">
-          <button class="sl-tab active" id="tabPips"  onclick="switchSlMode('pips')">pips で直接入力</button>
-          <button class="sl-tab"        id="tabPrice" onclick="switchSlMode('price')">価格から自動計算</button>
+          <button class="sl-tab active" id="tabPips" onclick="switchSlMode('pips')">pips で直接入力</button>
+          <button class="sl-tab" id="tabPrice" onclick="switchSlMode('price')">価格から自動計算</button>
         </div>
 
-        <!-- pips 直接入力 -->
         <div class="sl-panel active" id="panelPips">
           <div class="field-label">損切り幅 <span class="hint">エントリーから損切りまで</span></div>
           <div class="input-wrap">
@@ -437,13 +439,12 @@ input[type="range"]::-moz-range-thumb {
           </div>
         </div>
 
-        <!-- 価格から計算 -->
         <div class="sl-panel" id="panelPrice">
           <div class="fetch-row">
             <button class="fetch-btn" id="fetchBtn" onclick="fetchPrice()">
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5"/>
-                <path d="M10 2.5h3.5V6"/>
+                <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5"></path>
+                <path d="M10 2.5h3.5V6"></path>
               </svg>
               現在価格を取得
             </button>
@@ -475,7 +476,6 @@ input[type="range"]::-moz-range-thumb {
     <button class="calc-btn" onclick="calculate()">ロット数を計算する</button>
   </div>
 
-  <!-- 結果 -->
   <div class="card result-card" id="resultCard">
     <div class="card-title">計算結果</div>
     <div class="result-main">
@@ -507,32 +507,36 @@ input[type="range"]::-moz-range-thumb {
   </div>
 
 </div>
+
 <script>
 const PAIRS = {
-  USDJPY: { label:'USD/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 USD' },
-  EURJPY: { label:'EUR/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 EUR' },
-  GBPJPY: { label:'GBP/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 GBP' },
-  AUDJPY: { label:'AUD/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 AUD' },
-  NZDJPY: { label:'NZD/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 NZD' },
-  CADJPY: { label:'CAD/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 CAD' },
-  CHFJPY: { label:'CHF/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 CHF' },
-  EURUSD: { label:'EUR/USD',   pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 EUR' },
-  GBPUSD: { label:'GBP/USD',   pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 GBP' },
-  AUDUSD: { label:'AUD/USD',   pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 AUD' },
-  NZDUSD: { label:'NZD/USD',   pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 NZD' },
-  USDCAD: { label:'USD/CAD',   pipSize:0.0001, lotSize:100000, category:'USDCAD', lotUnit:'1lot = 100,000 USD' },
-  AUDCAD: { label:'AUD/CAD',   pipSize:0.0001, lotSize:100000, category:'AUDCAD', lotUnit:'1lot = 100,000 AUD' },
-  USDCHF: { label:'USD/CHF',   pipSize:0.0001, lotSize:100000, category:'USDCHF', lotUnit:'1lot = 100,000 USD' },
-  EURAUD: { label:'EUR/AUD',   pipSize:0.0001, lotSize:100000, category:'EURAUD', lotUnit:'1lot = 100,000 EUR' },
-  GOLD:   { label:'GOLD',      pipSize:0.01,   lotSize:100,    category:'GOLD',   lotUnit:'1lot = 100 oz' },
-  SILVER: { label:'SILVER',    pipSize:0.001,  lotSize:5000,   category:'USD_CM', lotUnit:'1lot = 5,000 oz' },
-  JP225:  { label:'JP225Cash', pipSize:1,      lotSize:1,      category:'JP225',  lotUnit:'1lot = 1 単位' },
-  US30:   { label:'US30Cash',  pipSize:1,      lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位' },
-  US100:  { label:'US100Cash', pipSize:0.1,    lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位' },
-  US500:  { label:'US500Cash', pipSize:0.1,    lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位' },
-  OIL:    { label:'OILCash',   pipSize:0.01,   lotSize:1000,   category:'USD_CM', lotUnit:'1lot = 1,000 バレル' },
-  BTCUSD: { label:'BTC/USD',   pipSize:1,      lotSize:1,      category:'CRYPTO', lotUnit:'1lot = 1 BTC' },
-  ETHUSD: { label:'ETH/USD',   pipSize:0.1,    lotSize:1,      category:'CRYPTO', lotUnit:'1lot = 1 ETH' },
+  USDJPY: { label:'USD/JPY', pipSize:0.01, lotSize:100000, category:'JPY', lotUnit:'1lot = 100,000 USD' },
+  EURJPY: { label:'EUR/JPY', pipSize:0.01, lotSize:100000, category:'JPY', lotUnit:'1lot = 100,000 EUR' },
+  GBPJPY: { label:'GBP/JPY', pipSize:0.01, lotSize:100000, category:'JPY', lotUnit:'1lot = 100,000 GBP' },
+  AUDJPY: { label:'AUD/JPY', pipSize:0.01, lotSize:100000, category:'JPY', lotUnit:'1lot = 100,000 AUD' },
+  NZDJPY: { label:'NZD/JPY', pipSize:0.01, lotSize:100000, category:'JPY', lotUnit:'1lot = 100,000 NZD' },
+  CADJPY: { label:'CAD/JPY', pipSize:0.01, lotSize:100000, category:'JPY', lotUnit:'1lot = 100,000 CAD' },
+  CHFJPY: { label:'CHF/JPY', pipSize:0.01, lotSize:100000, category:'JPY', lotUnit:'1lot = 100,000 CHF' },
+
+  EURUSD: { label:'EUR/USD', pipSize:0.0001, lotSize:100000, category:'USD', lotUnit:'1lot = 100,000 EUR' },
+  GBPUSD: { label:'GBP/USD', pipSize:0.0001, lotSize:100000, category:'USD', lotUnit:'1lot = 100,000 GBP' },
+  AUDUSD: { label:'AUD/USD', pipSize:0.0001, lotSize:100000, category:'USD', lotUnit:'1lot = 100,000 AUD' },
+  NZDUSD: { label:'NZD/USD', pipSize:0.0001, lotSize:100000, category:'USD', lotUnit:'1lot = 100,000 NZD' },
+  USDCAD: { label:'USD/CAD', pipSize:0.0001, lotSize:100000, category:'USDCAD', lotUnit:'1lot = 100,000 USD' },
+  AUDCAD: { label:'AUD/CAD', pipSize:0.0001, lotSize:100000, category:'AUDCAD', lotUnit:'1lot = 100,000 AUD' },
+  USDCHF: { label:'USD/CHF', pipSize:0.0001, lotSize:100000, category:'USDCHF', lotUnit:'1lot = 100,000 USD' },
+  EURAUD: { label:'EUR/AUD', pipSize:0.0001, lotSize:100000, category:'EURAUD', lotUnit:'1lot = 100,000 EUR' },
+
+  GOLD:   { label:'GOLD', pipSize:0.01, lotSize:100, category:'GOLD', lotUnit:'1lot = 100 oz' },
+  SILVER: { label:'SILVER', pipSize:0.001, lotSize:5000, category:'USD_CM', lotUnit:'1lot = 5,000 oz' },
+  JP225:  { label:'JP225Cash', pipSize:1, lotSize:1, category:'JP225', lotUnit:'1lot = 1 単位' },
+  US30:   { label:'US30Cash', pipSize:1, lotSize:1, category:'US_IDX', lotUnit:'1lot = 1 単位' },
+  US100:  { label:'US100Cash', pipSize:0.1, lotSize:1, category:'US_IDX', lotUnit:'1lot = 1 単位' },
+  US500:  { label:'US500Cash', pipSize:0.1, lotSize:1, category:'US_IDX', lotUnit:'1lot = 1 単位' },
+  OIL:    { label:'OILCash', pipSize:0.01, lotSize:1000, category:'USD_CM', lotUnit:'1lot = 1,000 バレル' },
+
+  BTCUSD: { label:'BTC/USD', pipSize:1, lotSize:1, category:'CRYPTO', lotUnit:'1lot = 1 BTC' },
+  ETHUSD: { label:'ETH/USD', pipSize:0.1, lotSize:1, category:'CRYPTO', lotUnit:'1lot = 1 ETH' }
 };
 
 const R = { USDJPY:150, AUDUSD:0.65, USDCAD:1.36, USDCHF:0.90 };
@@ -540,9 +544,12 @@ let selectedPair = 'USDJPY';
 let slMode = 'pips';
 
 function selectPair(btn) {
-  document.querySelectorAll('.pair-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.pair-btn').forEach(function(b) {
+    b.classList.remove('active');
+  });
   btn.classList.add('active');
   selectedPair = btn.dataset.pair;
+  setFetchStatus('', '');
   if (slMode === 'price') fetchPrice();
   calcAutoPips();
 }
@@ -560,26 +567,39 @@ async function fetchPrice() {
   const btn = document.getElementById('fetchBtn');
   btn.disabled = true;
   setFetchStatus('loading', '価格取得中...');
+
   try {
     const res = await fetch('/api/price?pair=' + encodeURIComponent(selectedPair));
+    const data = await res.json().catch(function() { return {}; });
+
     if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.message || 'サーバーエラー (HTTP ' + res.status + ')');
+      throw new Error(
+        data.error ||
+        data.message ||
+        ('サーバーエラー (HTTP ' + res.status + ')')
+      );
     }
-    const data = await res.json();
+
     const price = parseFloat(data.price);
-    if (isNaN(price) || price <= 0) throw new Error('価格データが無効です');
+    if (isNaN(price) || price <= 0) {
+      throw new Error('価格データが無効です');
+    }
+
     const entryEl = document.getElementById('entryPrice');
     entryEl.value = price;
     entryEl.classList.add('fetched');
-    setTimeout(function() { entryEl.classList.remove('fetched'); }, 2000);
+    setTimeout(function() {
+      entryEl.classList.remove('fetched');
+    }, 2000);
+
     if (selectedPair === 'USDJPY') R.USDJPY = price;
     if (selectedPair === 'AUDUSD') R.AUDUSD = price;
     if (selectedPair === 'USDCAD') R.USDCAD = price;
     if (selectedPair === 'USDCHF') R.USDCHF = price;
+
     setFetchStatus('ok', '取得完了: ' + price);
     calcAutoPips();
-  } catch(e) {
+  } catch (e) {
     setFetchStatus('err', '取得失敗: ' + e.message);
   } finally {
     btn.disabled = false;
@@ -587,27 +607,30 @@ async function fetchPrice() {
 }
 
 function setFetchStatus(type, msg) {
-  var el = document.getElementById('fetchStatus');
-  el.className = 'fetch-status ' + type;
+  const el = document.getElementById('fetchStatus');
+  el.className = 'fetch-status' + (type ? ' ' + type : '');
   el.textContent = msg;
 }
 
 function calcAutoPips() {
-  var entry = parseFloat(document.getElementById('entryPrice').value);
-  var sl    = parseFloat(document.getElementById('slPrice').value);
+  const entry = parseFloat(document.getElementById('entryPrice').value);
+  const sl = parseFloat(document.getElementById('slPrice').value);
+
   if (!entry || !sl || isNaN(entry) || isNaN(sl)) {
     document.getElementById('autoPipsVal').textContent = '—';
     return null;
   }
-  var pair = PAIRS[selectedPair];
-  var diff = Math.abs(entry - sl);
-  var pips = Math.round((diff / pair.pipSize) * 100) / 100;
+
+  const pair = PAIRS[selectedPair];
+  const diff = Math.abs(entry - sl);
+  const pips = Math.round((diff / pair.pipSize) * 100) / 100;
+
   document.getElementById('autoPipsVal').textContent = pips.toLocaleString();
   return pips;
 }
 
 function pipValueJPY(pair) {
-  var cat = pair.category;
+  const cat = pair.category;
   if (cat === 'JPY')    return pair.pipSize * pair.lotSize;
   if (cat === 'USD')    return pair.pipSize * pair.lotSize * R.USDJPY;
   if (cat === 'USDCAD') return pair.pipSize * pair.lotSize / R.USDCAD * R.USDJPY;
@@ -623,9 +646,10 @@ function pipValueJPY(pair) {
 }
 
 function calculate() {
-  var balance = parseFloat(document.getElementById('balance').value);
-  var riskPct = parseFloat(document.getElementById('risk').value);
-  var slPips;
+  const balance = parseFloat(document.getElementById('balance').value);
+  const riskPct = parseFloat(document.getElementById('risk').value);
+  let slPips;
+
   if (slMode === 'pips') {
     slPips = parseFloat(document.getElementById('slPips').value);
   } else {
@@ -635,27 +659,31 @@ function calculate() {
       return;
     }
   }
-  if (!balance || balance <= 0 || !riskPct || !slPips || slPips <= 0) {
-    flashError(); return;
-  }
-  var pair       = PAIRS[selectedPair];
-  var riskAmt    = balance * (riskPct / 100);
-  var pipVal     = pipValueJPY(pair);
-  var lotRaw     = riskAmt / (slPips * pipVal);
-  var lot        = Math.floor(lotRaw * 100) / 100;
-  var actualLoss = lot * slPips * pipVal;
 
-  document.getElementById('resLot').textContent     = lot.toFixed(2);
-  document.getElementById('resLoss').textContent    = Math.round(actualLoss).toLocaleString();
-  document.getElementById('detRisk').textContent    = Math.round(riskAmt).toLocaleString() + ' 円';
-  document.getElementById('detSL').textContent      = slPips.toLocaleString() + ' pips';
-  document.getElementById('detPip').textContent     = (Math.round(pipVal * 100) / 100).toLocaleString() + ' 円';
-  document.getElementById('detPair').textContent    = pair.label;
+  if (!balance || balance <= 0 || !riskPct || !slPips || slPips <= 0) {
+    flashError();
+    return;
+  }
+
+  const pair = PAIRS[selectedPair];
+  const riskAmt = balance * (riskPct / 100);
+  const pipVal = pipValueJPY(pair);
+  const lotRaw = riskAmt / (slPips * pipVal);
+  const lot = Math.floor(lotRaw * 100) / 100;
+  const actualLoss = lot * slPips * pipVal;
+
+  document.getElementById('resLot').textContent = lot.toFixed(2);
+  document.getElementById('resLoss').textContent = Math.round(actualLoss).toLocaleString();
+  document.getElementById('detRisk').textContent = Math.round(riskAmt).toLocaleString() + ' 円';
+  document.getElementById('detSL').textContent = slPips.toLocaleString() + ' pips';
+  document.getElementById('detPip').textContent = (Math.round(pipVal * 100) / 100).toLocaleString() + ' 円';
+  document.getElementById('detPair').textContent = pair.label;
   document.getElementById('detLotUnit').textContent = pair.lotUnit;
 
-  var warnBox = document.getElementById('warnBox');
+  const warnBox = document.getElementById('warnBox');
   warnBox.className = 'warn-box';
   warnBox.textContent = '';
+
   if (riskPct >= 5) {
     warnBox.className = 'warn-box risk-very-high';
     warnBox.textContent = '⚠ リスク5%超は非常に危険です。資産を大きく失う可能性があります。';
@@ -664,18 +692,24 @@ function calculate() {
     warnBox.textContent = '⚠ リスク2%超は上級者向けです。初心者は1〜2%を推奨します。';
   }
 
-  var card = document.getElementById('resultCard');
+  const card = document.getElementById('resultCard');
   card.classList.remove('visible');
   void card.offsetWidth;
   card.classList.add('visible');
-  setTimeout(function() { card.scrollIntoView({ behavior:'smooth', block:'nearest' }); }, 50);
+
+  setTimeout(function() {
+    card.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }, 50);
 }
 
 function flashError() {
-  var btn = document.querySelector('.calc-btn');
+  const btn = document.querySelector('.calc-btn');
   btn.style.background = '#f06060';
   btn.textContent = '値を正しく入力してください';
-  setTimeout(function() { btn.style.background = ''; btn.textContent = 'ロット数を計算する'; }, 1600);
+  setTimeout(function() {
+    btn.style.background = '';
+    btn.textContent = 'ロット数を計算する';
+  }, 1600);
 }
 
 function resetAll() {
@@ -688,7 +722,9 @@ function resetAll() {
   document.getElementById('autoPipsVal').textContent = '—';
   document.getElementById('fetchStatus').textContent = '';
   document.getElementById('resultCard').classList.remove('visible');
-  document.querySelectorAll('.pair-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.pair-btn').forEach(function(b) {
+    b.classList.remove('active');
+  });
   document.querySelector('[data-pair="USDJPY"]').classList.add('active');
   selectedPair = 'USDJPY';
   switchSlMode('pips');
