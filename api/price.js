@@ -9,7 +9,6 @@ export default async function handler(req, res) {
 
   const rawPair = req.query.pair || 'USD/JPY';
 
-  // 画面の表示名 -> Twelve Data に渡す symbol
   const symbolMap = {
     'USD/JPY': 'USD/JPY',
     'EUR/USD': 'EUR/USD',
@@ -26,18 +25,14 @@ export default async function handler(req, res) {
     'NZD/JPY': 'NZD/JPY',
     'CAD/JPY': 'CAD/JPY',
     'CHF/JPY': 'CHF/JPY',
-
     'GOLD': 'XAU/USD',
     'SILVER': 'XAG/USD',
-
-    'BTC/USD': 'BTC/USD',
-    'ETH/USD': 'ETH/USD',
-
-    // ここは通る銘柄名に差が出やすい
     'JP225Cash': 'N225',
     'US30Cash': 'DJI',
     'US100Cash': 'IXIC',
     'US500Cash': 'SPX',
+    'BTC/USD': 'BTC/USD',
+    'ETH/USD': 'ETH/USD',
     'OILCash': 'WTI'
   };
 
@@ -50,10 +45,9 @@ export default async function handler(req, res) {
     });
   }
 
-  // 本番は環境変数推奨
-  const apiKey = process.env.TWELVE_DATA_API_KEY || 'ここにあなたのAPIキー';
+  const apiKey = process.env.TWELVE_DATA_API_KEY;
 
-  if (!apiKey || apiKey === 'ここにあなたのAPIキー') {
+  if (!apiKey) {
     return res.status(500).json({
       error: 'APIキーが未設定です'
     });
@@ -64,7 +58,6 @@ export default async function handler(req, res) {
     const response = await fetch(url);
     const data = await response.json();
 
-    // Twelve Dataの標準エラー形式
     if (!response.ok || data.status === 'error') {
       return res.status(400).json({
         error: '価格取得に失敗しました',
@@ -94,4 +87,4 @@ export default async function handler(req, res) {
       message: error.message
     });
   }
-}const apiKey = "818bd1701115482e908967c6348a5a8e";
+}
