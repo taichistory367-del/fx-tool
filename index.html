@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FX ロット計算ツール</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f12;
+  --surface: #161920;
+  --surface2: #1e222c;
+  --border: #2a2f3d;
+  --border2: #363d52;
+  --accent: #4af0b4;
+  --accent-dim: #1a3d30;
+  --blue: #4ab4f0;
+  --blue-dim: #1a2e3d;
+  --danger: #f06060;
+  --danger-dim: #3d1a1a;
+  --warn: #f0b84a;
+  --warn-dim: #3d2e10;
+  --text: #e8eaf2;
+  --text2: #8890a8;
+  --text3: #545c72;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Noto Sans JP', sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem 4rem;
+}
+.container { width: 100%; max-width: 460px; }
+
+.header { margin-bottom: 2rem; animation: fadeUp .5s ease both; }
+.header-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-tag::before {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:.4; transform:scale(.8); }
+}
+.header h1 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
+.header h1 span { color: var(--accent); }
+.header p { margin-top: 6px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  animation: fadeUp .5s ease both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.card-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 1.25rem;
+}
+
+.pair-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; }
+.pair-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 2px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text2);
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s;
+  line-height: 1.3;
+}
+.pair-btn:hover { border-color: var(--border2); color: var(--text); }
+.pair-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.pair-category {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin: 10px 0 5px;
+}
+
+.fields { display: flex; flex-direction: column; gap: 1rem; }
+.field-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 8px;
+}
+.field-label .hint { font-size: 11px; color: var(--text3); }
+
+.input-wrap { position: relative; display: flex; align-items: center; }
+.input-wrap input[type="number"] {
+  width: 100%;
+  height: 48px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 64px 0 14px;
+  font-family: var(--mono);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  -moz-appearance: textfield;
+}
+.input-wrap input[type="number"]::-webkit-outer-spin-button,
+.input-wrap input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.input-wrap input[type="number"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(74,240,180,.08);
+}
+.input-wrap .unit {
+  position: absolute;
+  right: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text3);
+  pointer-events: none;
+}
+
+.risk-display { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.risk-val { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--accent); }
+.risk-val span { font-size: 12px; color: var(--text3); }
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface2);
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--surface);
+  cursor: pointer;
+  transition: transform .1s;
+}
+input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.2); }
+input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 3px solid var(--surface);
+  cursor: pointer;
+}
+.range-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
+.sl-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px;
+  margin-bottom: 1rem;
+}
+.sl-tab {
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text2);
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  background: transparent;
+  font-family: var(--sans);
+  transition: all .15s;
+  line-height: 1.4;
+}
+.sl-tab.active { background: var(--surface); color: var(--text); border: 1px solid var(--border2); }
+.sl-panel { display: none; }
+.sl-panel.active { display: block; }
+
+.price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.price-field .pf-label { font-size: 11px; color: var(--text2); margin-bottom: 6px; display: block; }
+.price-field input[type="number"] {
+  width: 100%;
+  height: 44px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  -moz-appearance: textfield;
+}
+.price-field input[type="number"]::-webkit-outer-spin-button,
+.price-field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+.price-field input[type="number"]:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(74,180,240,.08); }
+.price-field input.fetched { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(74,240,180,.1); }
+
+.fetch-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.fetch-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 38px;
+  background: var(--blue-dim);
+  border: 1px solid var(--blue);
+  border-radius: var(--radius-sm);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--blue);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.fetch-btn:hover { background: #1f3a52; }
+.fetch-btn:active { transform: scale(.97); }
+.fetch-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.fetch-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.fetch-status { font-size: 12px; color: var(--text3); font-family: var(--mono); }
+.fetch-status.loading { color: var(--blue); }
+.fetch-status.ok { color: var(--accent); }
+.fetch-status.err { color: var(--danger); }
+
+.auto-pips-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--blue-dim);
+  border: 1px solid #4ab4f030;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+}
+.auto-pips-row .ap-label { font-size: 12px; color: var(--blue); opacity: .7; }
+.auto-pips-row .ap-value { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--blue); }
+.auto-pips-row .ap-unit  { font-family: var(--mono); font-size: 11px; color: var(--blue); opacity: .6; margin-left: 4px; }
+
+.calc-btn {
+  width: 100%;
+  height: 52px;
+  background: var(--accent);
+  color: #0a1a13;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s;
+  margin-top: 1.5rem;
+}
+.calc-btn:hover { opacity: .88; }
+.calc-btn:active { transform: scale(.98); }
+
+.result-card { display: none; animation: fadeUp .4s ease both; }
+.result-card.visible { display: block; }
+
+.result-main { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.result-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1rem .875rem;
+}
+.result-box.highlight { background: var(--accent-dim); border-color: var(--accent); }
+.rb-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; font-family: var(--mono); letter-spacing: .06em; }
+.result-box.highlight .rb-label { color: #4af0b470; }
+.rb-value { font-family: var(--mono); font-size: 24px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 4px; }
+.result-box.highlight .rb-value { color: var(--accent); }
+.rb-unit { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+.detail-list { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.detail-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.detail-row:last-child { border-bottom: none; }
+.detail-row .dl { color: var(--text2); }
+.detail-row .dv { font-family: var(--mono); font-size: 13px; color: var(--text); font-weight: 500; }
+
+.warn-box { display: none; margin-top: 10px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.5; }
+.warn-box.risk-high    { display: block; background: var(--warn-dim);   border: 1px solid #f0b84a50; color: var(--warn); }
+.warn-box.risk-very-high { display: block; background: var(--danger-dim); border: 1px solid #f0606050; color: var(--danger); }
+
+.reset-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text3);
+  font-family: var(--sans);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.reset-btn:hover { border-color: var(--border2); color: var(--text2); }
+
+.footer { margin-top: 1.5rem; text-align: center; font-size: 11px; color: var(--text3); line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-tag">FX Risk Manager</div>
+    <h1>ロット<span>計算</span>ツール</h1>
+    <p>口座残高とリスク設定から、適正なロット数を瞬時に算出します。</p>
+  </div>
+
+  <!-- 銘柄選択 -->
+  <div class="card">
+    <div class="card-title">銘柄を選択</div>
+
+    <div class="pair-category">FX — JPY ペア</div>
+    <div class="pair-grid">
+      <button class="pair-btn active" data-pair="USDJPY" onclick="selectPair(this)">USD/JPY</button>
+      <button class="pair-btn" data-pair="EURJPY"  onclick="selectPair(this)">EUR/JPY</button>
+      <button class="pair-btn" data-pair="GBPJPY"  onclick="selectPair(this)">GBP/JPY</button>
+      <button class="pair-btn" data-pair="AUDJPY"  onclick="selectPair(this)">AUD/JPY</button>
+      <button class="pair-btn" data-pair="NZDJPY"  onclick="selectPair(this)">NZD/JPY</button>
+      <button class="pair-btn" data-pair="CADJPY"  onclick="selectPair(this)">CAD/JPY</button>
+      <button class="pair-btn" data-pair="CHFJPY"  onclick="selectPair(this)">CHF/JPY</button>
+    </div>
+
+    <div class="pair-category">FX — USD ペア / クロス</div>
+    <div class="pair-grid">
+      <button class="pair-btn" data-pair="EURUSD" onclick="selectPair(this)">EUR/USD</button>
+      <button class="pair-btn" data-pair="GBPUSD" onclick="selectPair(this)">GBP/USD</button>
+      <button class="pair-btn" data-pair="AUDUSD" onclick="selectPair(this)">AUD/USD</button>
+      <button class="pair-btn" data-pair="NZDUSD" onclick="selectPair(this)">NZD/USD</button>
+      <button class="pair-btn" data-pair="USDCAD" onclick="selectPair(this)">USD/CAD</button>
+      <button class="pair-btn" data-pair="AUDCAD" onclick="selectPair(this)">AUD/CAD</button>
+      <button class="pair-btn" data-pair="USDCHF" onclick="selectPair(this)">USD/CHF</button>
+      <button class="pair-btn" data-pair="EURAUD" onclick="selectPair(this)">EUR/AUD</button>
+    </div>
+
+    <div class="pair-category">貴金属 / 指数 / コモディティ</div>
+    <div class="pair-grid">
+      <button class="pair-btn" data-pair="GOLD"   onclick="selectPair(this)">GOLD</button>
+      <button class="pair-btn" data-pair="SILVER" onclick="selectPair(this)">SILVER</button>
+      <button class="pair-btn" data-pair="JP225"  onclick="selectPair(this)">JP225</button>
+      <button class="pair-btn" data-pair="US30"   onclick="selectPair(this)">US30</button>
+      <button class="pair-btn" data-pair="US100"  onclick="selectPair(this)">US100</button>
+      <button class="pair-btn" data-pair="US500"  onclick="selectPair(this)">US500</button>
+      <button class="pair-btn" data-pair="OIL"    onclick="selectPair(this)">OIL</button>
+    </div>
+
+    <div class="pair-category">仮想通貨</div>
+    <div class="pair-grid">
+      <button class="pair-btn" data-pair="BTCUSD" onclick="selectPair(this)">BTC/USD</button>
+      <button class="pair-btn" data-pair="ETHUSD" onclick="selectPair(this)">ETH/USD</button>
+    </div>
+  </div>
+
+  <!-- リスク設定 -->
+  <div class="card">
+    <div class="card-title">リスク設定を入力</div>
+    <div class="fields">
+
+      <div>
+        <div class="field-label">口座残高 <span class="hint">証拠金の総額</span></div>
+        <div class="input-wrap">
+          <input type="number" id="balance" value="500000" min="0" step="10000">
+          <span class="unit">円</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">許容リスク <span class="hint">1トレードで失ってよい割合</span></div>
+        <div class="risk-display">
+          <div class="risk-val" id="riskDisplay">2.0<span>%</span></div>
+        </div>
+        <input type="range" id="risk" min="0.5" max="10" step="0.5" value="2"
+               oninput="document.getElementById('riskDisplay').innerHTML=parseFloat(this.value).toFixed(1)+'<span>%</span>'">
+        <div class="range-labels">
+          <span>0.5%（保守）</span><span>2%（標準）</span><span>10%（高リスク）</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">損切り幅の入力方法</div>
+        <div class="sl-tabs">
+          <button class="sl-tab active" id="tabPips"  onclick="switchSlMode('pips')">pips で直接入力</button>
+          <button class="sl-tab"        id="tabPrice" onclick="switchSlMode('price')">価格から自動計算</button>
+        </div>
+
+        <!-- pips 直接入力 -->
+        <div class="sl-panel active" id="panelPips">
+          <div class="field-label">損切り幅 <span class="hint">エントリーから損切りまで</span></div>
+          <div class="input-wrap">
+            <input type="number" id="slPips" value="20" min="0.01" step="1">
+            <span class="unit">pips</span>
+          </div>
+        </div>
+
+        <!-- 価格から計算 -->
+        <div class="sl-panel" id="panelPrice">
+          <div class="fetch-row">
+            <button class="fetch-btn" id="fetchBtn" onclick="fetchPrice()">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5"/>
+                <path d="M10 2.5h3.5V6"/>
+              </svg>
+              現在価格を取得
+            </button>
+            <span class="fetch-status" id="fetchStatus"></span>
+          </div>
+
+          <div class="price-row">
+            <div class="price-field">
+              <span class="pf-label">現在価格（エントリー価格）</span>
+              <input type="number" id="entryPrice" placeholder="取得 or 手入力" step="any" oninput="calcAutoPips()">
+            </div>
+            <div class="price-field">
+              <span class="pf-label">損切り価格（ストップロス）</span>
+              <input type="number" id="slPrice" placeholder="例: 149.800" step="any" oninput="calcAutoPips()">
+            </div>
+          </div>
+
+          <div class="auto-pips-row">
+            <span class="ap-label">自動計算された損切り幅</span>
+            <span>
+              <span class="ap-value" id="autoPipsVal">—</span>
+              <span class="ap-unit">pips</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <button class="calc-btn" onclick="calculate()">ロット数を計算する</button>
+  </div>
+
+  <!-- 結果 -->
+  <div class="card result-card" id="resultCard">
+    <div class="card-title">計算結果</div>
+    <div class="result-main">
+      <div class="result-box highlight">
+        <div class="rb-label">適正ロット数</div>
+        <div class="rb-value" id="resLot">—</div>
+        <div class="rb-unit">lot</div>
+      </div>
+      <div class="result-box">
+        <div class="rb-label">最大損失金額</div>
+        <div class="rb-value" id="resLoss">—</div>
+        <div class="rb-unit">円</div>
+      </div>
+    </div>
+    <div class="detail-list">
+      <div class="detail-row"><span class="dl">リスク金額</span><span class="dv" id="detRisk">—</span></div>
+      <div class="detail-row"><span class="dl">損切り幅</span><span class="dv" id="detSL">—</span></div>
+      <div class="detail-row"><span class="dl">1lot・最小値幅の損益</span><span class="dv" id="detPip">—</span></div>
+      <div class="detail-row"><span class="dl">銘柄</span><span class="dv" id="detPair">—</span></div>
+      <div class="detail-row"><span class="dl">ロット換算</span><span class="dv" id="detLotUnit">—</span></div>
+    </div>
+    <div class="warn-box" id="warnBox"></div>
+    <button class="reset-btn" onclick="resetAll()">リセット</button>
+  </div>
+
+  <div class="footer">
+    ※ pip値計算はUSD/JPY=150円、USD/CAD=1.36、AUD/USD=0.65、USD/CHF=0.90で試算。<br>
+    実際のレートにより損益は変動します。投資は自己責任で行ってください。
+  </div>
+
+</div>
+<script>
+const PAIRS = {
+  USDJPY: { label:'USD/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 USD' },
+  EURJPY: { label:'EUR/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 EUR' },
+  GBPJPY: { label:'GBP/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 GBP' },
+  AUDJPY: { label:'AUD/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 AUD' },
+  NZDJPY: { label:'NZD/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 NZD' },
+  CADJPY: { label:'CAD/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 CAD' },
+  CHFJPY: { label:'CHF/JPY',   pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 CHF' },
+  EURUSD: { label:'EUR/USD',   pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 EUR' },
+  GBPUSD: { label:'GBP/USD',   pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 GBP' },
+  AUDUSD: { label:'AUD/USD',   pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 AUD' },
+  NZDUSD: { label:'NZD/USD',   pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 NZD' },
+  USDCAD: { label:'USD/CAD',   pipSize:0.0001, lotSize:100000, category:'USDCAD', lotUnit:'1lot = 100,000 USD' },
+  AUDCAD: { label:'AUD/CAD',   pipSize:0.0001, lotSize:100000, category:'AUDCAD', lotUnit:'1lot = 100,000 AUD' },
+  USDCHF: { label:'USD/CHF',   pipSize:0.0001, lotSize:100000, category:'USDCHF', lotUnit:'1lot = 100,000 USD' },
+  EURAUD: { label:'EUR/AUD',   pipSize:0.0001, lotSize:100000, category:'EURAUD', lotUnit:'1lot = 100,000 EUR' },
+  GOLD:   { label:'GOLD',      pipSize:0.01,   lotSize:100,    category:'GOLD',   lotUnit:'1lot = 100 oz' },
+  SILVER: { label:'SILVER',    pipSize:0.001,  lotSize:5000,   category:'USD_CM', lotUnit:'1lot = 5,000 oz' },
+  JP225:  { label:'JP225Cash', pipSize:1,      lotSize:1,      category:'JP225',  lotUnit:'1lot = 1 単位' },
+  US30:   { label:'US30Cash',  pipSize:1,      lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位' },
+  US100:  { label:'US100Cash', pipSize:0.1,    lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位' },
+  US500:  { label:'US500Cash', pipSize:0.1,    lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位' },
+  OIL:    { label:'OILCash',   pipSize:0.01,   lotSize:1000,   category:'USD_CM', lotUnit:'1lot = 1,000 バレル' },
+  BTCUSD: { label:'BTC/USD',   pipSize:1,      lotSize:1,      category:'CRYPTO', lotUnit:'1lot = 1 BTC' },
+  ETHUSD: { label:'ETH/USD',   pipSize:0.1,    lotSize:1,      category:'CRYPTO', lotUnit:'1lot = 1 ETH' },
+};
+
+const R = { USDJPY:150, AUDUSD:0.65, USDCAD:1.36, USDCHF:0.90 };
+let selectedPair = 'USDJPY';
+let slMode = 'pips';
+
+function selectPair(btn) {
+  document.querySelectorAll('.pair-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedPair = btn.dataset.pair;
+  if (slMode === 'price') fetchPrice();
+  calcAutoPips();
+}
+
+function switchSlMode(mode) {
+  slMode = mode;
+  document.getElementById('tabPips').classList.toggle('active', mode === 'pips');
+  document.getElementById('tabPrice').classList.toggle('active', mode === 'price');
+  document.getElementById('panelPips').classList.toggle('active', mode === 'pips');
+  document.getElementById('panelPrice').classList.toggle('active', mode === 'price');
+  if (mode === 'price' && !document.getElementById('entryPrice').value) fetchPrice();
+}
+
+async function fetchPrice() {
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true;
+  setFetchStatus('loading', '価格取得中...');
+  try {
+    const res = await fetch('/api/price?pair=' + encodeURIComponent(selectedPair));
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || 'サーバーエラー (HTTP ' + res.status + ')');
+    }
+    const data = await res.json();
+    const price = parseFloat(data.price);
+    if (isNaN(price) || price <= 0) throw new Error('価格データが無効です');
+    const entryEl = document.getElementById('entryPrice');
+    entryEl.value = price;
+    entryEl.classList.add('fetched');
+    setTimeout(function() { entryEl.classList.remove('fetched'); }, 2000);
+    if (selectedPair === 'USDJPY') R.USDJPY = price;
+    if (selectedPair === 'AUDUSD') R.AUDUSD = price;
+    if (selectedPair === 'USDCAD') R.USDCAD = price;
+    if (selectedPair === 'USDCHF') R.USDCHF = price;
+    setFetchStatus('ok', '取得完了: ' + price);
+    calcAutoPips();
+  } catch(e) {
+    setFetchStatus('err', '取得失敗: ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function setFetchStatus(type, msg) {
+  var el = document.getElementById('fetchStatus');
+  el.className = 'fetch-status ' + type;
+  el.textContent = msg;
+}
+
+function calcAutoPips() {
+  var entry = parseFloat(document.getElementById('entryPrice').value);
+  var sl    = parseFloat(document.getElementById('slPrice').value);
+  if (!entry || !sl || isNaN(entry) || isNaN(sl)) {
+    document.getElementById('autoPipsVal').textContent = '—';
+    return null;
+  }
+  var pair = PAIRS[selectedPair];
+  var diff = Math.abs(entry - sl);
+  var pips = Math.round((diff / pair.pipSize) * 100) / 100;
+  document.getElementById('autoPipsVal').textContent = pips.toLocaleString();
+  return pips;
+}
+
+function pipValueJPY(pair) {
+  var cat = pair.category;
+  if (cat === 'JPY')    return pair.pipSize * pair.lotSize;
+  if (cat === 'USD')    return pair.pipSize * pair.lotSize * R.USDJPY;
+  if (cat === 'USDCAD') return pair.pipSize * pair.lotSize / R.USDCAD * R.USDJPY;
+  if (cat === 'AUDCAD') return pair.pipSize * pair.lotSize * R.AUDUSD / R.USDCAD * R.USDJPY;
+  if (cat === 'USDCHF') return pair.pipSize * pair.lotSize / R.USDCHF * R.USDJPY;
+  if (cat === 'EURAUD') return pair.pipSize * pair.lotSize * R.AUDUSD * R.USDJPY;
+  if (cat === 'GOLD')   return pair.pipSize * pair.lotSize * R.USDJPY;
+  if (cat === 'USD_CM') return pair.pipSize * pair.lotSize * R.USDJPY;
+  if (cat === 'JP225')  return pair.pipSize * pair.lotSize;
+  if (cat === 'US_IDX') return pair.pipSize * pair.lotSize * R.USDJPY;
+  if (cat === 'CRYPTO') return pair.pipSize * pair.lotSize * R.USDJPY;
+  return pair.pipSize * pair.lotSize * R.USDJPY;
+}
+
+function calculate() {
+  var balance = parseFloat(document.getElementById('balance').value);
+  var riskPct = parseFloat(document.getElementById('risk').value);
+  var slPips;
+  if (slMode === 'pips') {
+    slPips = parseFloat(document.getElementById('slPips').value);
+  } else {
+    slPips = calcAutoPips();
+    if (!slPips) {
+      setFetchStatus('err', '現在価格と損切り価格を両方入力してください');
+      return;
+    }
+  }
+  if (!balance || balance <= 0 || !riskPct || !slPips || slPips <= 0) {
+    flashError(); return;
+  }
+  var pair       = PAIRS[selectedPair];
+  var riskAmt    = balance * (riskPct / 100);
+  var pipVal     = pipValueJPY(pair);
+  var lotRaw     = riskAmt / (slPips * pipVal);
+  var lot        = Math.floor(lotRaw * 100) / 100;
+  var actualLoss = lot * slPips * pipVal;
+
+  document.getElementById('resLot').textContent     = lot.toFixed(2);
+  document.getElementById('resLoss').textContent    = Math.round(actualLoss).toLocaleString();
+  document.getElementById('detRisk').textContent    = Math.round(riskAmt).toLocaleString() + ' 円';
+  document.getElementById('detSL').textContent      = slPips.toLocaleString() + ' pips';
+  document.getElementById('detPip').textContent     = (Math.round(pipVal * 100) / 100).toLocaleString() + ' 円';
+  document.getElementById('detPair').textContent    = pair.label;
+  document.getElementById('detLotUnit').textContent = pair.lotUnit;
+
+  var warnBox = document.getElementById('warnBox');
+  warnBox.className = 'warn-box';
+  warnBox.textContent = '';
+  if (riskPct >= 5) {
+    warnBox.className = 'warn-box risk-very-high';
+    warnBox.textContent = '⚠ リスク5%超は非常に危険です。資産を大きく失う可能性があります。';
+  } else if (riskPct > 2) {
+    warnBox.className = 'warn-box risk-high';
+    warnBox.textContent = '⚠ リスク2%超は上級者向けです。初心者は1〜2%を推奨します。';
+  }
+
+  var card = document.getElementById('resultCard');
+  card.classList.remove('visible');
+  void card.offsetWidth;
+  card.classList.add('visible');
+  setTimeout(function() { card.scrollIntoView({ behavior:'smooth', block:'nearest' }); }, 50);
+}
+
+function flashError() {
+  var btn = document.querySelector('.calc-btn');
+  btn.style.background = '#f06060';
+  btn.textContent = '値を正しく入力してください';
+  setTimeout(function() { btn.style.background = ''; btn.textContent = 'ロット数を計算する'; }, 1600);
+}
+
+function resetAll() {
+  document.getElementById('balance').value = 500000;
+  document.getElementById('risk').value = 2;
+  document.getElementById('riskDisplay').innerHTML = '2.0<span>%</span>';
+  document.getElementById('slPips').value = 20;
+  document.getElementById('entryPrice').value = '';
+  document.getElementById('slPrice').value = '';
+  document.getElementById('autoPipsVal').textContent = '—';
+  document.getElementById('fetchStatus').textContent = '';
+  document.getElementById('resultCard').classList.remove('visible');
+  document.querySelectorAll('.pair-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelector('[data-pair="USDJPY"]').classList.add('active');
+  selectedPair = 'USDJPY';
+  switchSlMode('pips');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+</script>
+</body>
+</html>
