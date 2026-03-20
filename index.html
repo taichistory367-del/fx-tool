@@ -697,3 +697,11 @@ function resetAll() {
 </script>
 </body>
 </html>
+const res = await fetch(`/api/price?pair=${encodeURIComponent(selectedPair)}`);
+[
+  'USD/JPY', 'EUR/USD', 'GBP/USD', 'AUD/USD', 'NZD/USD',
+  'USD/CAD', 'AUD/CAD', 'USD/CHF', 'EUR/AUD', 'EUR/JPY',
+  'GBP/JPY', 'AUD/JPY', 'NZD/JPY', 'CAD/JPY', 'CHF/JPY',
+  'GOLD', 'SILVER', 'JP225Cash', 'US30Cash', 'US100Cash',
+  'US500Cash', 'BTC/USD', 'ETH/USD', 'OILCash'
+]
