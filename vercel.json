@@ -1,0 +1,6 @@
+{
+  "routes": [
+    { "src": "/free", "dest": "/index-free.html" },
+    { "src": "/pro",  "dest": "/index.html" }
+  ]
+}
