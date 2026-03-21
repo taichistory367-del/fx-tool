@@ -311,9 +311,9 @@ input[type="range"]::-moz-range-thumb {
   <div class="free-banner">
     <div class="free-banner-text">
       <strong>無料版をご利用中</strong>
-      有料版では現在価格の自動取得・価格からのpips計算が使えます
+      有料版では現在価格の自動取得・価格からのpips計算・ロット分割機能が使えます
     </div>
-    <a href="/" class="upgrade-btn">有料版へ</a>
+    <a href="/pro" class="upgrade-btn">有料版へ</a>
   </div>
 
   <!-- 銘柄選択 -->
@@ -403,12 +403,13 @@ input[type="range"]::-moz-range-thumb {
       <!-- 有料機能ロック -->
       <div class="locked-feature">
         <div class="lock-icon">🔒</div>
-        <div class="lf-title">現在価格から自動計算（有料版）</div>
+        <div class="lf-title">有料版で使える機能</div>
         <div class="lf-desc">
-          現在価格と損切り価格を入力するだけで<br>
-          pipsを自動計算できます。価格の自動取得も可能。
+          ・現在価格の自動取得<br>
+          ・価格からpips自動計算<br>
+          ・ロット分割機能
         </div>
-        <a href="/" class="lf-btn">有料版を使う</a>
+        <a href="/pro" class="lf-btn">有料版を使う</a>
       </div>
 
     </div>
@@ -420,7 +421,7 @@ input[type="range"]::-moz-range-thumb {
     <div class="card-label">計算結果</div>
     <div class="result-main">
       <div class="result-box highlight">
-        <div class="rb-label">適正ロット数（合計）</div>
+        <div class="rb-label">適正ロット数</div>
         <div class="rb-value" id="resLot">—</div>
         <div class="rb-unit">lot</div>
       </div>
@@ -431,16 +432,6 @@ input[type="range"]::-moz-range-thumb {
       </div>
     </div>
 
-    <div class="split-section">
-      <div class="split-header">
-        <div class="split-label">分割エントリー</div>
-        <div class="split-input-row">
-          <label for="splitCount">分割数</label>
-          <input type="number" id="splitCount" class="split-count-input" value="3" min="2" max="10" step="1" oninput="renderSplitCards()">
-        </div>
-      </div>
-      <div class="split-grid" id="splitGrid"></div>
-    </div>
 
     <div class="detail-list">
       <div class="detail-row"><span class="dl">リスク金額</span><span class="dv" id="detRisk">—</span></div>
@@ -519,33 +510,7 @@ function pipValueJPY(pair) {
   return pair.pipSize * pair.lotSize * R.USDJPY;
 }
 
-function renderSplitCards() {
-  var grid = document.getElementById('splitGrid');
-  var raw  = parseInt(document.getElementById('splitCount').value, 10);
-  var n    = (isNaN(raw) || raw < 2) ? 2 : (raw > 10 ? 10 : raw);
-  var lot    = lastResult.lot;
-  var slPips = lastResult.slPips;
-  var pipVal = lastResult.pipVal;
-  grid.innerHTML = '';
-  for (var i = 1; i <= n; i++) {
-    var sLotNum  = (lot !== null) ? Math.floor((lot / n) * 100) / 100 : null;
-    var sLotStr  = (sLotNum !== null) ? sLotNum.toFixed(2) : '—';
-    var sLossStr = (sLotNum !== null && slPips !== null && pipVal !== null)
-      ? Math.round(sLotNum * slPips * pipVal).toLocaleString() + ' 円' : '—';
-    var card = document.createElement('div');
-    card.className = 'split-card';
-    card.innerHTML =
-      '<div class="split-card-left">' +
-        '<div class="split-card-n">' + i + ' / ' + n + '</div>' +
-        '<div class="split-card-desc">' + i + ' 回目のエントリー</div>' +
-      '</div>' +
-      '<div class="split-card-right">' +
-        '<div class="split-card-lot">' + sLotStr + '<span>lot</span></div>' +
-        '<div class="split-card-loss">' + sLossStr + '</div>' +
-      '</div>';
-    grid.appendChild(card);
-  }
-}
+
 
 function calculate() {
   var balance = parseFloat(document.getElementById('balance').value);
@@ -574,7 +539,6 @@ function calculate() {
   lastResult.lot    = lot;
   lastResult.slPips = slPips;
   lastResult.pipVal = pipVal;
-  renderSplitCards();
 
   var warnBox = document.getElementById('warnBox');
   warnBox.className = 'warn-box';
@@ -610,8 +574,6 @@ function resetAll() {
   onRiskChange(2);
   document.getElementById('slPips').value = 20;
   document.getElementById('resultCard').classList.remove('visible');
-  document.getElementById('splitCount').value = 3;
-  document.getElementById('splitGrid').innerHTML = '';
   lastResult.lot = null;
   lastResult.slPips = null;
   lastResult.pipVal = null;
