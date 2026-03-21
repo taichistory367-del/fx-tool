@@ -4,29 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FX ロット計算ツール</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0d0f12;
-  --surface: #161920;
-  --surface2: #1e222c;
-  --border: #2a2f3d;
-  --border2: #363d52;
-  --accent: #4af0b4;
-  --accent-dim: #1a3d30;
-  --blue: #4ab4f0;
-  --blue-dim: #1a2e3d;
-  --danger: #f06060;
-  --danger-dim: #3d1a1a;
-  --warn: #f0b84a;
-  --warn-dim: #3d2e10;
-  --text: #e8eaf2;
-  --text2: #8890a8;
-  --text3: #545c72;
-  --mono: 'DM Mono', monospace;
-  --sans: 'Noto Sans JP', sans-serif;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --bg:        #141414;
+  --surface:   #1f1f1f;
+  --surface2:  #2a2a2a;
+  --surface3:  #333333;
+  --border:    #333333;
+  --border2:   #444444;
+  --red:       #e50914;
+  --red-dim:   #3d0408;
+  --red-mid:   #8b0000;
+  --text:      #ffffff;
+  --text2:     #b3b3b3;
+  --text3:     #666666;
+  --ok:        #46d369;
+  --ok-dim:    #0a2e14;
+  --warn:      #f5a623;
+  --warn-dim:  #2e1e05;
+  --danger:    #e50914;
+  --danger-dim:#3d0408;
+  --sans:      'Noto Sans JP', sans-serif;
+  --mono:      'Noto Sans JP', sans-serif;
+  --radius:    6px;
+  --radius-sm: 4px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -37,73 +39,61 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 2rem 1rem 4rem;
+  padding: 0 0 6rem;
+  -webkit-font-smoothing: antialiased;
 }
-.container { width: 100%; max-width: 460px; }
+.container { width: 100%; max-width: 520px; }
 
-.header { margin-bottom: 2rem; animation: fadeUp .5s ease both; }
-.header-tag {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--accent);
-  letter-spacing: .12em;
+/* ── Header ── */
+.header {
+  padding: 2.5rem 1.5rem 2rem;
+  border-bottom: 3px solid var(--red);
+  margin-bottom: 1.5rem;
+  animation: fadeUp .5s ease both;
+}
+.header-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .28em;
   text-transform: uppercase;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  color: var(--red);
+  margin-bottom: 12px;
 }
-.header-tag::before {
-  content: '';
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: pulse 2s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: .4; transform: scale(.8); }
-}
-.header h1 { font-size: 26px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
-.header h1 span { color: var(--accent); }
-.header p { margin-top: 6px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+.header h1 { font-size: 30px; font-weight: 700; letter-spacing: -.02em; line-height: 1.15; color: #fff; }
+.header h1 em { font-style: normal; color: var(--red); }
+.header p { margin-top: 8px; font-size: 13px; color: var(--text2); line-height: 1.7; }
 
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Card ── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.5rem;
-  margin-bottom: 1rem;
+  margin: 0 1rem .875rem;
   animation: fadeUp .5s ease both;
 }
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.card-title {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: .14em;
+.card + .card { animation-delay: .07s; }
+.card-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .24em;
   text-transform: uppercase;
   color: var(--text3);
   margin-bottom: 1.25rem;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
 }
 
-.pair-category {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: .1em;
-  color: var(--text3);
-  text-transform: uppercase;
-  margin: 10px 0 5px;
-}
-.pair-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-}
+/* ── Pair grid ── */
+.pair-group { margin-bottom: 1.1rem; }
+.pair-group:last-child { margin-bottom: 0; }
+.pair-group-label { font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+.pair-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; }
 .pair-btn {
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -111,329 +101,307 @@ body {
   padding: 9px 2px;
   font-family: var(--mono);
   font-size: 11px;
+  font-weight: 400;
   color: var(--text2);
   cursor: pointer;
   text-align: center;
-  transition: all .15s;
+  transition: all .14s;
   line-height: 1.3;
 }
-.pair-btn:hover { border-color: var(--border2); color: var(--text); }
-.pair-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
+.pair-btn:hover { border-color: var(--border2); color: #fff; background: var(--surface3); }
+.pair-btn.active { background: var(--red-dim); border-color: var(--red); color: #ff6b6b; font-weight: 700; }
 
-.fields { display: flex; flex-direction: column; gap: 1rem; }
-.field-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 13px;
-  color: var(--text2);
-  margin-bottom: 8px;
-}
-.field-label .hint { font-size: 11px; color: var(--text3); }
+/* ── Fields ── */
+.fields { display: flex; flex-direction: column; gap: 1.5rem; }
+.field-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; font-weight: 500; color: #fff; margin-bottom: 8px; }
+.field-label .hint { font-size: 10px; font-weight: 400; color: var(--text3); }
 
-.input-wrap { position: relative; display: flex; align-items: center; }
+.input-wrap { position: relative; }
 .input-wrap input[type="number"] {
   width: 100%;
-  height: 48px;
+  height: 52px;
   background: var(--surface2);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border2);
   border-radius: var(--radius-sm);
-  padding: 0 64px 0 14px;
+  padding: 0 60px 0 16px;
   font-family: var(--mono);
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 500;
-  color: var(--text);
+  color: #fff;
   outline: none;
-  transition: border-color .15s, box-shadow .15s;
+  transition: border-color .14s, box-shadow .14s;
   -moz-appearance: textfield;
+  letter-spacing: .02em;
 }
 .input-wrap input[type="number"]::-webkit-outer-spin-button,
 .input-wrap input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-.input-wrap input[type="number"]:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(74,240,180,.08);
-}
+.input-wrap input[type="number"]:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(229,9,20,.18); }
 .input-wrap .unit {
-  position: absolute;
-  right: 14px;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--text3);
-  pointer-events: none;
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  font-family: var(--mono); font-size: 11px; color: var(--text3);
+  pointer-events: none; letter-spacing: .1em; text-transform: uppercase;
 }
 
-.risk-display { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-.risk-val { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--accent); }
-.risk-val-pct { font-size: 12px; color: var(--text3); }
+/* Risk */
+.risk-row { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 12px; }
+.risk-label-block .rl-title { font-size: 13px; font-weight: 500; color: #fff; }
+.risk-label-block .rl-hint  { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.risk-big { font-family: var(--mono); font-size: 42px; font-weight: 500; color: #fff; line-height: 1; letter-spacing: -.02em; text-align: right; }
+.risk-big span { font-size: 18px; color: var(--text3); margin-left: 2px; }
 
 input[type="range"] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--surface2);
-  outline: none;
-  cursor: pointer;
-  margin-bottom: 6px;
+  -webkit-appearance: none; width: 100%; height: 3px; border-radius: 2px;
+  background: var(--surface3); outline: none; cursor: pointer; margin-bottom: 7px;
 }
 input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 3px solid var(--surface);
-  cursor: pointer;
-  transition: transform .1s;
+  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--red); border: 3px solid var(--surface); cursor: pointer; transition: transform .1s;
 }
 input[type="range"]::-webkit-slider-thumb:active { transform: scale(1.2); }
 input[type="range"]::-moz-range-thumb {
-  width: 20px; height: 20px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 3px solid var(--surface);
-  cursor: pointer;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--red); border: 3px solid var(--surface); cursor: pointer;
 }
-.range-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text3);
-}
+.range-labels { display: flex; justify-content: space-between; font-size: 9px; letter-spacing: .06em; color: var(--text3); }
 
+/* SL tabs */
 .sl-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 4px;
-  margin-bottom: 1rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 3px; margin-bottom: 1rem;
 }
 .sl-tab {
-  padding: 8px 4px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--text2);
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  background: transparent;
-  font-family: var(--sans);
-  transition: all .15s;
-  line-height: 1.4;
+  padding: 10px 4px; text-align: center; font-family: var(--sans);
+  font-size: 11px; font-weight: 400; letter-spacing: .03em; color: var(--text3);
+  cursor: pointer; border-radius: 3px; border: 1px solid transparent;
+  background: transparent; transition: all .14s; line-height: 1.4;
 }
-.sl-tab.active { background: var(--surface); color: var(--text); border: 1px solid var(--border2); }
+.sl-tab.active { background: var(--surface3); color: #fff; font-weight: 700; border-color: var(--border2); }
 .sl-panel { display: none; }
 .sl-panel.active { display: block; }
 
+/* fetch row */
 .fetch-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .fetch-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 14px;
-  height: 38px;
-  background: var(--blue-dim);
-  border: 1px solid var(--blue);
-  border-radius: var(--radius-sm);
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--blue);
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
+  display: flex; align-items: center; gap: 6px; padding: 0 14px; height: 36px;
+  background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm);
+  font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text2); cursor: pointer; transition: all .14s; white-space: nowrap;
 }
-.fetch-btn:hover { background: #1f3a52; }
+.fetch-btn:hover { border-color: var(--red); color: #ff6b6b; }
 .fetch-btn:active { transform: scale(.97); }
-.fetch-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
-.fetch-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
-.fetch-status { font-size: 12px; color: var(--text3); font-family: var(--mono); }
-.fetch-status.loading { color: var(--blue); }
-.fetch-status.ok  { color: var(--accent); }
-.fetch-status.err { color: var(--danger); }
+.fetch-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.fetch-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.fetch-status { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+.fetch-status.loading { color: var(--text2); }
+.fetch-status.ok  { color: var(--ok); }
+.fetch-status.err { color: var(--red); }
 
+/* price inputs */
 .price-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-.price-field .pf-label { font-size: 11px; color: var(--text2); margin-bottom: 6px; display: block; }
+.price-field .pf-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; display: block; }
 .price-field input[type="number"] {
-  width: 100%;
-  height: 44px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0 12px;
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text);
-  outline: none;
-  transition: border-color .15s, box-shadow .15s;
-  -moz-appearance: textfield;
+  width: 100%; height: 48px; background: var(--surface2); border: 2px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 0 12px; font-family: var(--mono); font-size: 16px;
+  font-weight: 500; color: #fff; outline: none; transition: border-color .14s, box-shadow .14s; -moz-appearance: textfield;
 }
 .price-field input[type="number"]::-webkit-outer-spin-button,
 .price-field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-.price-field input[type="number"]:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(74,180,240,.08);
-}
-.price-field input.fetched {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(74,240,180,.1);
-}
+.price-field input[type="number"]:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(229,9,20,.15); }
+.price-field input.fetched { border-color: var(--ok); box-shadow: 0 0 0 3px rgba(70,211,105,.12); }
 
+/* auto pips */
 .auto-pips-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--blue-dim);
-  border: 1px solid rgba(74,180,240,.18);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); padding: 12px 16px;
 }
-.ap-label { font-size: 12px; color: var(--blue); opacity: .7; }
-.ap-value { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--blue); }
-.ap-unit  { font-family: var(--mono); font-size: 11px; color: var(--blue); opacity: .6; margin-left: 4px; }
+.ap-label { font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--text3); }
+.ap-right { display: flex; align-items: baseline; gap: 5px; }
+.ap-value { font-family: var(--mono); font-size: 26px; font-weight: 500; color: #fff; letter-spacing: -.01em; }
+.ap-unit  { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--text3); text-transform: uppercase; }
 
+/* calc btn */
 .calc-btn {
-  width: 100%;
-  height: 52px;
-  background: var(--accent);
-  color: #0a1a13;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-family: var(--sans);
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: .02em;
-  cursor: pointer;
-  transition: opacity .15s, transform .1s;
-  margin-top: 1.5rem;
+  width: 100%; height: 54px; background: var(--red); color: #fff; border: none;
+  border-radius: var(--radius-sm); font-family: var(--sans); font-size: 14px; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: opacity .14s, transform .1s; margin-top: 1.5rem;
 }
-.calc-btn:hover  { opacity: .88; }
-.calc-btn:active { transform: scale(.98); }
+.calc-btn:hover { opacity: .85; }
+.calc-btn:active { transform: scale(.985); }
 
+/* ── Result ── */
 .result-card { display: none; animation: fadeUp .4s ease both; }
 .result-card.visible { display: block; }
 
-.result-main { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
-.result-box {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 1rem 1rem .875rem;
-}
-.result-box.highlight { background: var(--accent-dim); border-color: var(--accent); }
-.rb-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; font-family: var(--mono); letter-spacing: .06em; }
-.result-box.highlight .rb-label { color: rgba(74,240,180,.44); }
-.rb-value { font-family: var(--mono); font-size: 24px; font-weight: 500; color: var(--text); line-height: 1; margin-bottom: 4px; }
-.result-box.highlight .rb-value { color: var(--accent); }
-.rb-unit { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+.result-main { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+.result-box { background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 1rem 1rem .875rem; }
+.result-box.highlight { background: var(--red-dim); border: 2px solid var(--red); }
+.rb-label { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.result-box.highlight .rb-label { color: #ff6b6b80; }
+.rb-value { font-family: var(--mono); font-size: 32px; font-weight: 500; color: #fff; line-height: 1; margin-bottom: 5px; letter-spacing: -.02em; }
+.result-box.highlight .rb-value { color: #ff6b6b; }
+.rb-unit { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; color: var(--text3); text-transform: uppercase; }
 
-.detail-list {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-}
-.detail-row {
+/* ── Split section ── */
+.split-section { margin-bottom: 1rem; }
+.split-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
-.detail-row:last-child { border-bottom: none; }
-.detail-row .dl { color: var(--text2); }
-.detail-row .dv { font-family: var(--mono); font-size: 13px; color: var(--text); font-weight: 500; }
-
-.warn-box { display: none; margin-top: 10px; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; line-height: 1.5; }
-.warn-box.risk-high     { display: block; background: var(--warn-dim);   border: 1px solid rgba(240,184,74,.31);  color: var(--warn); }
-.warn-box.risk-veryhigh { display: block; background: var(--danger-dim); border: 1px solid rgba(240,96,96,.31); color: var(--danger); }
-
-.reset-btn {
-  width: 100%;
-  margin-top: 10px;
-  padding: 10px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+.split-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
   color: var(--text3);
-  font-family: var(--sans);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all .15s;
 }
-.reset-btn:hover { border-color: var(--border2); color: var(--text2); }
-
-.footer {
-  margin-top: 1.5rem;
-  text-align: center;
+.split-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.split-input-row label {
   font-size: 11px;
   color: var(--text3);
-  line-height: 1.8;
+  white-space: nowrap;
 }
+.split-count-input {
+  width: 56px;
+  height: 32px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: 0 8px;
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  outline: none;
+  text-align: center;
+  -moz-appearance: textfield;
+  transition: border-color .14s;
+}
+.split-count-input::-webkit-outer-spin-button,
+.split-count-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.split-count-input:focus { border-color: var(--red); }
+.split-grid { display: flex; flex-direction: column; gap: 4px; }
+.split-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color .14s;
+}
+.split-card:hover { border-color: var(--border2); }
+.split-card-n {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--red);
+  margin-bottom: 3px;
+}
+.split-card-desc { font-size: 10px; color: var(--text3); }
+.split-card-right { text-align: right; }
+.split-card-lot {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 3px;
+  letter-spacing: -.01em;
+}
+.split-card-lot span { font-size: 10px; color: var(--text3); margin-left: 3px; }
+.split-card-loss { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+
+.detail-list { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.detail-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 16px; border-bottom: 1px solid var(--border); }
+.detail-row:last-child { border-bottom: none; }
+.detail-row .dl { font-size: 11px; color: var(--text3); letter-spacing: .04em; }
+.detail-row .dv { font-family: var(--mono); font-size: 14px; font-weight: 500; color: #fff; letter-spacing: .02em; }
+
+.warn-box { display: none; margin-top: 10px; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 12px; line-height: 1.6; }
+.warn-box.risk-high    { display: block; background: var(--warn-dim); border: 1px solid #4a3000; color: var(--warn); }
+.warn-box.risk-veryhigh{ display: block; background: var(--danger-dim); border: 1px solid var(--red-mid); color: #ff6b6b; }
+
+.reset-btn {
+  width: 100%; margin-top: 10px; padding: 11px; background: transparent;
+  border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text3);
+  font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: .18em;
+  text-transform: uppercase; cursor: pointer; transition: all .14s;
+}
+.reset-btn:hover { border-color: var(--text3); color: var(--text2); }
+
+.footer { padding: 1.5rem; text-align: center; font-size: 10px; letter-spacing: .04em; color: var(--text3); line-height: 1.9; }
 </style>
 </head>
 <body>
 <div class="container">
 
   <div class="header">
-    <div class="header-tag">FX Risk Manager</div>
-    <h1>ロット<span>計算</span>ツール</h1>
+    <div class="header-eyebrow">FX Risk Manager</div>
+    <h1>ロット<em>計算</em>ツール</h1>
     <p>口座残高とリスク設定から、適正なロット数を瞬時に算出します。</p>
   </div>
 
   <!-- 銘柄選択 -->
   <div class="card">
-    <div class="card-title">銘柄を選択</div>
-
-    <div class="pair-category">FX — JPY ペア</div>
-    <div class="pair-grid">
-      <button class="pair-btn active" data-pair="USDJPY" onclick="selectPair(this)">USD/JPY</button>
-      <button class="pair-btn" data-pair="EURJPY"  onclick="selectPair(this)">EUR/JPY</button>
-      <button class="pair-btn" data-pair="GBPJPY"  onclick="selectPair(this)">GBP/JPY</button>
-      <button class="pair-btn" data-pair="AUDJPY"  onclick="selectPair(this)">AUD/JPY</button>
-      <button class="pair-btn" data-pair="NZDJPY"  onclick="selectPair(this)">NZD/JPY</button>
-      <button class="pair-btn" data-pair="CADJPY"  onclick="selectPair(this)">CAD/JPY</button>
-      <button class="pair-btn" data-pair="CHFJPY"  onclick="selectPair(this)">CHF/JPY</button>
+    <div class="card-label">銘柄を選択</div>
+    <div class="pair-group">
+      <div class="pair-group-label">FX — JPY ペア</div>
+      <div class="pair-grid">
+        <button class="pair-btn active" data-pair="USDJPY" onclick="selectPair(this)">USD/JPY</button>
+        <button class="pair-btn" data-pair="EURJPY"  onclick="selectPair(this)">EUR/JPY</button>
+        <button class="pair-btn" data-pair="GBPJPY"  onclick="selectPair(this)">GBP/JPY</button>
+        <button class="pair-btn" data-pair="AUDJPY"  onclick="selectPair(this)">AUD/JPY</button>
+        <button class="pair-btn" data-pair="NZDJPY"  onclick="selectPair(this)">NZD/JPY</button>
+        <button class="pair-btn" data-pair="CADJPY"  onclick="selectPair(this)">CAD/JPY</button>
+        <button class="pair-btn" data-pair="CHFJPY"  onclick="selectPair(this)">CHF/JPY</button>
+      </div>
     </div>
-
-    <div class="pair-category">FX — USD ペア / クロス</div>
-    <div class="pair-grid">
-      <button class="pair-btn" data-pair="EURUSD" onclick="selectPair(this)">EUR/USD</button>
-      <button class="pair-btn" data-pair="GBPUSD" onclick="selectPair(this)">GBP/USD</button>
-      <button class="pair-btn" data-pair="AUDUSD" onclick="selectPair(this)">AUD/USD</button>
-      <button class="pair-btn" data-pair="NZDUSD" onclick="selectPair(this)">NZD/USD</button>
-      <button class="pair-btn" data-pair="USDCAD" onclick="selectPair(this)">USD/CAD</button>
-      <button class="pair-btn" data-pair="AUDCAD" onclick="selectPair(this)">AUD/CAD</button>
-      <button class="pair-btn" data-pair="USDCHF" onclick="selectPair(this)">USD/CHF</button>
-      <button class="pair-btn" data-pair="EURAUD" onclick="selectPair(this)">EUR/AUD</button>
+    <div class="pair-group">
+      <div class="pair-group-label">FX — USD ペア / クロス</div>
+      <div class="pair-grid">
+        <button class="pair-btn" data-pair="EURUSD" onclick="selectPair(this)">EUR/USD</button>
+        <button class="pair-btn" data-pair="GBPUSD" onclick="selectPair(this)">GBP/USD</button>
+        <button class="pair-btn" data-pair="AUDUSD" onclick="selectPair(this)">AUD/USD</button>
+        <button class="pair-btn" data-pair="NZDUSD" onclick="selectPair(this)">NZD/USD</button>
+        <button class="pair-btn" data-pair="USDCAD" onclick="selectPair(this)">USD/CAD</button>
+        <button class="pair-btn" data-pair="AUDCAD" onclick="selectPair(this)">AUD/CAD</button>
+        <button class="pair-btn" data-pair="USDCHF" onclick="selectPair(this)">USD/CHF</button>
+        <button class="pair-btn" data-pair="EURAUD" onclick="selectPair(this)">EUR/AUD</button>
+      </div>
     </div>
-
-    <div class="pair-category">貴金属 / 指数 / コモディティ</div>
-    <div class="pair-grid">
-      <button class="pair-btn" data-pair="GOLD"   onclick="selectPair(this)">GOLD</button>
-      <button class="pair-btn" data-pair="SILVER" onclick="selectPair(this)">SILVER</button>
-      <button class="pair-btn" data-pair="JP225"  onclick="selectPair(this)">JP225</button>
-      <button class="pair-btn" data-pair="US30"   onclick="selectPair(this)">US30</button>
-      <button class="pair-btn" data-pair="US100"  onclick="selectPair(this)">US100</button>
-      <button class="pair-btn" data-pair="US500"  onclick="selectPair(this)">US500</button>
-      <button class="pair-btn" data-pair="OIL"    onclick="selectPair(this)">OIL</button>
+    <div class="pair-group">
+      <div class="pair-group-label">貴金属 / 指数 / コモディティ</div>
+      <div class="pair-grid">
+        <button class="pair-btn" data-pair="GOLD"   onclick="selectPair(this)">GOLD</button>
+        <button class="pair-btn" data-pair="SILVER" onclick="selectPair(this)">SILVER</button>
+        <button class="pair-btn" data-pair="JP225"  onclick="selectPair(this)">JP225</button>
+        <button class="pair-btn" data-pair="US30"   onclick="selectPair(this)">US30</button>
+        <button class="pair-btn" data-pair="US100"  onclick="selectPair(this)">US100</button>
+        <button class="pair-btn" data-pair="US500"  onclick="selectPair(this)">US500</button>
+        <button class="pair-btn" data-pair="OIL"    onclick="selectPair(this)">OIL</button>
+      </div>
     </div>
-
-    <div class="pair-category">仮想通貨</div>
-    <div class="pair-grid">
-      <button class="pair-btn" data-pair="BTCUSD" onclick="selectPair(this)">BTC/USD</button>
-      <button class="pair-btn" data-pair="ETHUSD" onclick="selectPair(this)">ETH/USD</button>
+    <div class="pair-group">
+      <div class="pair-group-label">仮想通貨</div>
+      <div class="pair-grid">
+        <button class="pair-btn" data-pair="BTCUSD" onclick="selectPair(this)">BTC/USD</button>
+        <button class="pair-btn" data-pair="ETHUSD" onclick="selectPair(this)">ETH/USD</button>
+      </div>
     </div>
   </div>
 
   <!-- リスク設定 -->
   <div class="card">
-    <div class="card-title">リスク設定を入力</div>
+    <div class="card-label">リスク設定</div>
     <div class="fields">
 
       <div>
@@ -445,9 +413,12 @@ input[type="range"]::-moz-range-thumb {
       </div>
 
       <div>
-        <div class="field-label">許容リスク <span class="hint">1トレードで失ってよい割合</span></div>
-        <div class="risk-display">
-          <div class="risk-val" id="riskDisplay">2.0<span class="risk-val-pct">%</span></div>
+        <div class="risk-row">
+          <div class="risk-label-block">
+            <div class="rl-title">許容リスク</div>
+            <div class="rl-hint">1トレードで失ってよい割合</div>
+          </div>
+          <div class="risk-big" id="riskDisplay">2.0<span>%</span></div>
         </div>
         <input type="range" id="risk" min="0.5" max="10" step="0.5" value="2" oninput="onRiskChange(this.value)">
         <div class="range-labels">
@@ -462,7 +433,6 @@ input[type="range"]::-moz-range-thumb {
           <button class="sl-tab"        id="tabPrice" onclick="switchSlMode('price')">価格から自動計算</button>
         </div>
 
-        <!-- pips 直接入力 -->
         <div class="sl-panel active" id="panelPips">
           <div class="field-label">損切り幅 <span class="hint">エントリーから損切りまで</span></div>
           <div class="input-wrap">
@@ -471,7 +441,6 @@ input[type="range"]::-moz-range-thumb {
           </div>
         </div>
 
-        <!-- 価格から計算 -->
         <div class="sl-panel" id="panelPrice">
           <div class="fetch-row">
             <button class="fetch-btn" id="fetchBtn" onclick="fetchPrice()">
@@ -483,24 +452,22 @@ input[type="range"]::-moz-range-thumb {
             </button>
             <span class="fetch-status" id="fetchStatus"></span>
           </div>
-
           <div class="price-row">
             <div class="price-field">
-              <span class="pf-label">現在価格（エントリー価格）</span>
-              <input type="number" id="entryPrice" placeholder="取得 or 手入力" step="any" oninput="calcAutoPips()">
+              <span class="pf-label">現在価格（エントリー）</span>
+              <input type="number" id="entryPrice" step="any" oninput="calcAutoPips()">
             </div>
             <div class="price-field">
-              <span class="pf-label">損切り価格（ストップロス）</span>
-              <input type="number" id="slPrice" placeholder="例: 149.800" step="any" oninput="calcAutoPips()">
+              <span class="pf-label">損切り価格（ストップ）</span>
+              <input type="number" id="slPrice" step="any" oninput="calcAutoPips()">
             </div>
           </div>
-
           <div class="auto-pips-row">
-            <span class="ap-label">自動計算された損切り幅</span>
-            <span>
+            <span class="ap-label">損切り幅</span>
+            <div class="ap-right">
               <span class="ap-value" id="autoPipsVal">—</span>
               <span class="ap-unit">pips</span>
-            </span>
+            </div>
           </div>
         </div>
       </div>
@@ -511,10 +478,12 @@ input[type="range"]::-moz-range-thumb {
 
   <!-- 結果 -->
   <div class="card result-card" id="resultCard">
-    <div class="card-title">計算結果</div>
+    <div class="card-label">計算結果</div>
+
+    <!-- トータルロット -->
     <div class="result-main">
       <div class="result-box highlight">
-        <div class="rb-label">適正ロット数</div>
+        <div class="rb-label">適正ロット数（合計）</div>
         <div class="rb-value" id="resLot">—</div>
         <div class="rb-unit">lot</div>
       </div>
@@ -524,6 +493,20 @@ input[type="range"]::-moz-range-thumb {
         <div class="rb-unit">円</div>
       </div>
     </div>
+
+    <!-- 分割エントリー -->
+    <div class="split-section">
+      <div class="split-header">
+        <div class="split-label">分割エントリー</div>
+        <div class="split-input-row">
+          <label for="splitCount">分割数</label>
+          <input type="number" id="splitCount" class="split-count-input" value="3" min="2" max="10" step="1" oninput="renderSplitCards()">
+        </div>
+      </div>
+      <div class="split-grid" id="splitGrid"></div>
+    </div>
+
+    <!-- 詳細 -->
     <div class="detail-list">
       <div class="detail-row"><span class="dl">リスク金額</span><span class="dv" id="detRisk">—</span></div>
       <div class="detail-row"><span class="dl">損切り幅</span><span class="dv" id="detSL">—</span></div>
@@ -531,63 +514,78 @@ input[type="range"]::-moz-range-thumb {
       <div class="detail-row"><span class="dl">銘柄</span><span class="dv" id="detPair">—</span></div>
       <div class="detail-row"><span class="dl">ロット換算</span><span class="dv" id="detLotUnit">—</span></div>
     </div>
+
     <div class="warn-box" id="warnBox"></div>
     <button class="reset-btn" onclick="resetAll()">リセット</button>
   </div>
 
   <div class="footer">
-    ※ pip値計算はUSD/JPY=150円、USD/CAD=1.36、AUD/USD=0.65、USD/CHF=0.90で試算。<br>
+    ※ USD/JPY=150円、USD/CAD=1.36、AUD/USD=0.65、USD/CHF=0.90で試算。<br>
     実際のレートにより損益は変動します。投資は自己責任で行ってください。
   </div>
 
 </div>
 <script>
 var PAIRS = {
-  USDJPY: { label: 'USD/JPY',   pipSize: 0.01,   lotSize: 100000, category: 'JPY',    lotUnit: '1lot = 100,000 USD' },
-  EURJPY: { label: 'EUR/JPY',   pipSize: 0.01,   lotSize: 100000, category: 'JPY',    lotUnit: '1lot = 100,000 EUR' },
-  GBPJPY: { label: 'GBP/JPY',   pipSize: 0.01,   lotSize: 100000, category: 'JPY',    lotUnit: '1lot = 100,000 GBP' },
-  AUDJPY: { label: 'AUD/JPY',   pipSize: 0.01,   lotSize: 100000, category: 'JPY',    lotUnit: '1lot = 100,000 AUD' },
-  NZDJPY: { label: 'NZD/JPY',   pipSize: 0.01,   lotSize: 100000, category: 'JPY',    lotUnit: '1lot = 100,000 NZD' },
-  CADJPY: { label: 'CAD/JPY',   pipSize: 0.01,   lotSize: 100000, category: 'JPY',    lotUnit: '1lot = 100,000 CAD' },
-  CHFJPY: { label: 'CHF/JPY',   pipSize: 0.01,   lotSize: 100000, category: 'JPY',    lotUnit: '1lot = 100,000 CHF' },
-  EURUSD: { label: 'EUR/USD',   pipSize: 0.0001, lotSize: 100000, category: 'USD',    lotUnit: '1lot = 100,000 EUR' },
-  GBPUSD: { label: 'GBP/USD',   pipSize: 0.0001, lotSize: 100000, category: 'USD',    lotUnit: '1lot = 100,000 GBP' },
-  AUDUSD: { label: 'AUD/USD',   pipSize: 0.0001, lotSize: 100000, category: 'USD',    lotUnit: '1lot = 100,000 AUD' },
-  NZDUSD: { label: 'NZD/USD',   pipSize: 0.0001, lotSize: 100000, category: 'USD',    lotUnit: '1lot = 100,000 NZD' },
-  USDCAD: { label: 'USD/CAD',   pipSize: 0.0001, lotSize: 100000, category: 'USDCAD', lotUnit: '1lot = 100,000 USD' },
-  AUDCAD: { label: 'AUD/CAD',   pipSize: 0.0001, lotSize: 100000, category: 'AUDCAD', lotUnit: '1lot = 100,000 AUD' },
-  USDCHF: { label: 'USD/CHF',   pipSize: 0.0001, lotSize: 100000, category: 'USDCHF', lotUnit: '1lot = 100,000 USD' },
-  EURAUD: { label: 'EUR/AUD',   pipSize: 0.0001, lotSize: 100000, category: 'EURAUD', lotUnit: '1lot = 100,000 EUR' },
-  GOLD:   { label: 'GOLD',      pipSize: 0.01,   lotSize: 100,    category: 'GOLD',   lotUnit: '1lot = 100 oz' },
-  SILVER: { label: 'SILVER',    pipSize: 0.001,  lotSize: 5000,   category: 'USD_CM', lotUnit: '1lot = 5,000 oz' },
-  JP225:  { label: 'JP225',     pipSize: 1,      lotSize: 1,      category: 'JP225',  lotUnit: '1lot = 1 単位' },
-  US30:   { label: 'US30',      pipSize: 1,      lotSize: 1,      category: 'US_IDX', lotUnit: '1lot = 1 単位' },
-  US100:  { label: 'US100',     pipSize: 0.1,    lotSize: 1,      category: 'US_IDX', lotUnit: '1lot = 1 単位' },
-  US500:  { label: 'US500',     pipSize: 0.1,    lotSize: 1,      category: 'US_IDX', lotUnit: '1lot = 1 単位' },
-  OIL:    { label: 'OIL',       pipSize: 0.01,   lotSize: 1000,   category: 'USD_CM', lotUnit: '1lot = 1,000 バレル' },
-  BTCUSD: { label: 'BTC/USD',   pipSize: 1,      lotSize: 1,      category: 'CRYPTO', lotUnit: '1lot = 1 BTC' },
-  ETHUSD: { label: 'ETH/USD',   pipSize: 0.1,    lotSize: 1,      category: 'CRYPTO', lotUnit: '1lot = 1 ETH' }
+  USDJPY: { label:'USD/JPY',  pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 USD', decimals:3, step:'0.001',   placeholder:'例: 149.800' },
+  EURJPY: { label:'EUR/JPY',  pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 EUR', decimals:3, step:'0.001',   placeholder:'例: 163.500' },
+  GBPJPY: { label:'GBP/JPY',  pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 GBP', decimals:3, step:'0.001',   placeholder:'例: 192.300' },
+  AUDJPY: { label:'AUD/JPY',  pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 AUD', decimals:3, step:'0.001',   placeholder:'例: 98.500'  },
+  NZDJPY: { label:'NZD/JPY',  pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 NZD', decimals:3, step:'0.001',   placeholder:'例: 90.200'  },
+  CADJPY: { label:'CAD/JPY',  pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 CAD', decimals:3, step:'0.001',   placeholder:'例: 110.500' },
+  CHFJPY: { label:'CHF/JPY',  pipSize:0.01,   lotSize:100000, category:'JPY',    lotUnit:'1lot = 100,000 CHF', decimals:3, step:'0.001',   placeholder:'例: 168.400' },
+  EURUSD: { label:'EUR/USD',  pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 EUR', decimals:5, step:'0.00001', placeholder:'例: 1.08524' },
+  GBPUSD: { label:'GBP/USD',  pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 GBP', decimals:5, step:'0.00001', placeholder:'例: 1.27350' },
+  AUDUSD: { label:'AUD/USD',  pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 AUD', decimals:5, step:'0.00001', placeholder:'例: 0.65120' },
+  NZDUSD: { label:'NZD/USD',  pipSize:0.0001, lotSize:100000, category:'USD',    lotUnit:'1lot = 100,000 NZD', decimals:5, step:'0.00001', placeholder:'例: 0.60240' },
+  USDCAD: { label:'USD/CAD',  pipSize:0.0001, lotSize:100000, category:'USDCAD', lotUnit:'1lot = 100,000 USD', decimals:5, step:'0.00001', placeholder:'例: 1.36420' },
+  AUDCAD: { label:'AUD/CAD',  pipSize:0.0001, lotSize:100000, category:'AUDCAD', lotUnit:'1lot = 100,000 AUD', decimals:5, step:'0.00001', placeholder:'例: 0.88920' },
+  USDCHF: { label:'USD/CHF',  pipSize:0.0001, lotSize:100000, category:'USDCHF', lotUnit:'1lot = 100,000 USD', decimals:5, step:'0.00001', placeholder:'例: 0.90340' },
+  EURAUD: { label:'EUR/AUD',  pipSize:0.0001, lotSize:100000, category:'EURAUD', lotUnit:'1lot = 100,000 EUR', decimals:5, step:'0.00001', placeholder:'例: 1.66250' },
+  GOLD:   { label:'GOLD',     pipSize:0.01,   lotSize:100,    category:'GOLD',   lotUnit:'1lot = 100 oz',      decimals:2, step:'0.01',    placeholder:'例: 3025.45' },
+  SILVER: { label:'SILVER',   pipSize:0.001,  lotSize:5000,   category:'USD_CM', lotUnit:'1lot = 5,000 oz',    decimals:3, step:'0.001',   placeholder:'例: 33.125'  },
+  JP225:  { label:'JP225',    pipSize:1,      lotSize:1,      category:'JP225',  lotUnit:'1lot = 1 単位',       decimals:0, step:'1',       placeholder:'例: 40125'   },
+  US30:   { label:'US30',     pipSize:1,      lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位',       decimals:0, step:'1',       placeholder:'例: 42110'   },
+  US100:  { label:'US100',    pipSize:0.1,    lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位',       decimals:1, step:'0.1',     placeholder:'例: 18250.4' },
+  US500:  { label:'US500',    pipSize:0.1,    lotSize:1,      category:'US_IDX', lotUnit:'1lot = 1 単位',       decimals:1, step:'0.1',     placeholder:'例: 5123.4'  },
+  OIL:    { label:'OIL',      pipSize:0.01,   lotSize:1000,   category:'USD_CM', lotUnit:'1lot = 1,000 バレル',  decimals:2, step:'0.01',    placeholder:'例: 78.45'   },
+  BTCUSD: { label:'BTC/USD',  pipSize:1,      lotSize:1,      category:'CRYPTO', lotUnit:'1lot = 1 BTC',        decimals:0, step:'1',       placeholder:'例: 84250'   },
+  ETHUSD: { label:'ETH/USD',  pipSize:0.1,    lotSize:1,      category:'CRYPTO', lotUnit:'1lot = 1 ETH',        decimals:1, step:'0.1',     placeholder:'例: 3025.4'  }
 };
 
-var R = { USDJPY: 150, AUDUSD: 0.65, USDCAD: 1.36, USDCHF: 0.90 };
+var R = { USDJPY:150, AUDUSD:0.65, USDCAD:1.36, USDCHF:0.90 };
 var selectedPair = 'USDJPY';
 var slMode = 'pips';
 
+// 直近の計算結果を保持（分割表示の再描画に使う）
+var lastResult = { lot: null, slPips: null, pipVal: null };
+
+function formatPrice(price, pair) {
+  return parseFloat(price).toFixed(pair.decimals);
+}
+
+function updatePriceInputs() {
+  var p = PAIRS[selectedPair];
+  var entry = document.getElementById('entryPrice');
+  var sl    = document.getElementById('slPrice');
+  entry.step = p.step;
+  entry.placeholder = p.placeholder;
+  sl.step = p.step;
+  sl.placeholder = p.placeholder;
+}
+
 function onRiskChange(val) {
-  var pct = parseFloat(val).toFixed(1);
-  document.getElementById('riskDisplay').innerHTML = pct + '<span class="risk-val-pct">%</span>';
+  document.getElementById('riskDisplay').innerHTML =
+    parseFloat(val).toFixed(1) + '<span>%</span>';
 }
 
 function selectPair(btn) {
   var btns = document.querySelectorAll('.pair-btn');
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].classList.remove('active');
-  }
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
   btn.classList.add('active');
   selectedPair = btn.getAttribute('data-pair');
-  if (slMode === 'price') {
-    fetchPrice();
-  }
+  updatePriceInputs();
+  if (slMode === 'price') { fetchPrice(); }
   calcAutoPips();
 }
 
@@ -597,9 +595,7 @@ function switchSlMode(mode) {
   document.getElementById('tabPrice').classList.toggle('active', mode === 'price');
   document.getElementById('panelPips').classList.toggle('active', mode === 'pips');
   document.getElementById('panelPrice').classList.toggle('active', mode === 'price');
-  if (mode === 'price' && !document.getElementById('entryPrice').value) {
-    fetchPrice();
-  }
+  if (mode === 'price' && !document.getElementById('entryPrice').value) { fetchPrice(); }
 }
 
 function setFetchStatus(type, msg) {
@@ -612,7 +608,6 @@ function fetchPrice() {
   var btn = document.getElementById('fetchBtn');
   btn.disabled = true;
   setFetchStatus('loading', '価格取得中...');
-
   fetch('/api/price?pair=' + encodeURIComponent(selectedPair))
     .then(function(res) {
       return res.json().then(function(data) {
@@ -625,19 +620,17 @@ function fetchPrice() {
     })
     .then(function(data) {
       var price = parseFloat(data.price);
-      if (isNaN(price) || price <= 0) throw new Error('価格データが無効です');
-
+      if (isNaN(price) || price <= 0) { throw new Error('価格データが無効です'); }
+      var pair = PAIRS[selectedPair];
       var entryEl = document.getElementById('entryPrice');
-      entryEl.value = price;
+      entryEl.value = formatPrice(price, pair);
       entryEl.classList.add('fetched');
       setTimeout(function() { entryEl.classList.remove('fetched'); }, 2000);
-
-      if (selectedPair === 'USDJPY') R.USDJPY = price;
-      if (selectedPair === 'AUDUSD') R.AUDUSD = price;
-      if (selectedPair === 'USDCAD') R.USDCAD = price;
-      if (selectedPair === 'USDCHF') R.USDCHF = price;
-
-      setFetchStatus('ok', '取得完了: ' + price);
+      if (selectedPair === 'USDJPY') { R.USDJPY = price; }
+      if (selectedPair === 'AUDUSD') { R.AUDUSD = price; }
+      if (selectedPair === 'USDCAD') { R.USDCAD = price; }
+      if (selectedPair === 'USDCHF') { R.USDCHF = price; }
+      setFetchStatus('ok', '取得完了: ' + formatPrice(price, pair));
       calcAutoPips();
     })
     .catch(function(e) {
@@ -664,25 +657,61 @@ function calcAutoPips() {
 
 function pipValueJPY(pair) {
   var cat = pair.category;
-  if (cat === 'JPY')    return pair.pipSize * pair.lotSize;
-  if (cat === 'USD')    return pair.pipSize * pair.lotSize * R.USDJPY;
-  if (cat === 'USDCAD') return pair.pipSize * pair.lotSize / R.USDCAD * R.USDJPY;
-  if (cat === 'AUDCAD') return pair.pipSize * pair.lotSize * R.AUDUSD / R.USDCAD * R.USDJPY;
-  if (cat === 'USDCHF') return pair.pipSize * pair.lotSize / R.USDCHF * R.USDJPY;
-  if (cat === 'EURAUD') return pair.pipSize * pair.lotSize * R.AUDUSD * R.USDJPY;
-  if (cat === 'GOLD')   return pair.pipSize * pair.lotSize * R.USDJPY;
-  if (cat === 'USD_CM') return pair.pipSize * pair.lotSize * R.USDJPY;
-  if (cat === 'JP225')  return pair.pipSize * pair.lotSize;
-  if (cat === 'US_IDX') return pair.pipSize * pair.lotSize * R.USDJPY;
-  if (cat === 'CRYPTO') return pair.pipSize * pair.lotSize * R.USDJPY;
+  if (cat === 'JPY')    { return pair.pipSize * pair.lotSize; }
+  if (cat === 'USD')    { return pair.pipSize * pair.lotSize * R.USDJPY; }
+  if (cat === 'USDCAD') { return pair.pipSize * pair.lotSize / R.USDCAD * R.USDJPY; }
+  if (cat === 'AUDCAD') { return pair.pipSize * pair.lotSize * R.AUDUSD / R.USDCAD * R.USDJPY; }
+  if (cat === 'USDCHF') { return pair.pipSize * pair.lotSize / R.USDCHF * R.USDJPY; }
+  if (cat === 'EURAUD') { return pair.pipSize * pair.lotSize * R.AUDUSD * R.USDJPY; }
+  if (cat === 'GOLD')   { return pair.pipSize * pair.lotSize * R.USDJPY; }
+  if (cat === 'USD_CM') { return pair.pipSize * pair.lotSize * R.USDJPY; }
+  if (cat === 'JP225')  { return pair.pipSize * pair.lotSize; }
+  if (cat === 'US_IDX') { return pair.pipSize * pair.lotSize * R.USDJPY; }
+  if (cat === 'CRYPTO') { return pair.pipSize * pair.lotSize * R.USDJPY; }
   return pair.pipSize * pair.lotSize * R.USDJPY;
 }
 
+/* ── 分割カードを描画 ── */
+function renderSplitCards() {
+  var grid = document.getElementById('splitGrid');
+  var raw  = parseInt(document.getElementById('splitCount').value, 10);
+  var n    = (isNaN(raw) || raw < 2) ? 2 : (raw > 10 ? 10 : raw);
+
+  var lot    = lastResult.lot;
+  var slPips = lastResult.slPips;
+  var pipVal = lastResult.pipVal;
+
+  grid.innerHTML = '';
+
+  for (var i = 1; i <= n; i++) {
+    var card = document.createElement('div');
+    card.className = 'split-card';
+
+    var sLotNum = (lot !== null) ? Math.floor((lot / n) * 100) / 100 : null;
+    var sLotStr = (sLotNum !== null) ? sLotNum.toFixed(2) : '—';
+    var sLossStr = (sLotNum !== null && slPips !== null && pipVal !== null)
+      ? Math.round(sLotNum * slPips * pipVal).toLocaleString() + ' 円'
+      : '—';
+
+    card.innerHTML =
+      '<div class="split-card-left">' +
+        '<div class="split-card-n">' + i + ' / ' + n + '</div>' +
+        '<div class="split-card-desc">' + i + ' 回目のエントリー</div>' +
+      '</div>' +
+      '<div class="split-card-right">' +
+        '<div class="split-card-lot">' + sLotStr + '<span>lot</span></div>' +
+        '<div class="split-card-loss">' + sLossStr + '</div>' +
+      '</div>';
+
+    grid.appendChild(card);
+  }
+}
+
+/* ── メイン計算 ── */
 function calculate() {
   var balance = parseFloat(document.getElementById('balance').value);
   var riskPct = parseFloat(document.getElementById('risk').value);
   var slPips;
-
   if (slMode === 'pips') {
     slPips = parseFloat(document.getElementById('slPips').value);
   } else {
@@ -692,10 +721,8 @@ function calculate() {
       return;
     }
   }
-
   if (!balance || balance <= 0 || !riskPct || !slPips || slPips <= 0) {
-    flashError();
-    return;
+    flashError(); return;
   }
 
   var pair       = PAIRS[selectedPair];
@@ -713,6 +740,12 @@ function calculate() {
   document.getElementById('detPair').textContent    = pair.label;
   document.getElementById('detLotUnit').textContent = pair.lotUnit;
 
+  // 結果を保存して分割カードを描画
+  lastResult.lot    = lot;
+  lastResult.slPips = slPips;
+  lastResult.pipVal = pipVal;
+  renderSplitCards();
+
   var warnBox = document.getElementById('warnBox');
   warnBox.className = 'warn-box';
   warnBox.textContent = '';
@@ -728,17 +761,15 @@ function calculate() {
   card.classList.remove('visible');
   void card.offsetWidth;
   card.classList.add('visible');
-  setTimeout(function() {
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 50);
+  setTimeout(function() { card.scrollIntoView({ behavior:'smooth', block:'nearest' }); }, 50);
 }
 
 function flashError() {
   var btn = document.getElementById('calcBtn');
-  btn.style.background = '#f06060';
+  btn.style.opacity = '.6';
   btn.textContent = '値を正しく入力してください';
   setTimeout(function() {
-    btn.style.background = '';
+    btn.style.opacity = '';
     btn.textContent = 'ロット数を計算する';
   }, 1600);
 }
@@ -754,18 +785,24 @@ function resetAll() {
   document.getElementById('fetchStatus').className = 'fetch-status';
   document.getElementById('fetchStatus').textContent = '';
   document.getElementById('resultCard').classList.remove('visible');
+  document.getElementById('splitCount').value = 3;
+  document.getElementById('splitGrid').innerHTML = '';
+  lastResult.lot = null;
+  lastResult.slPips = null;
+  lastResult.pipVal = null;
   var warnBox = document.getElementById('warnBox');
   warnBox.className = 'warn-box';
   warnBox.textContent = '';
   var btns = document.querySelectorAll('.pair-btn');
-  for (var i = 0; i < btns.length; i++) {
-    btns[i].classList.remove('active');
-  }
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
   document.querySelector('[data-pair="USDJPY"]').classList.add('active');
   selectedPair = 'USDJPY';
+  updatePriceInputs();
   switchSlMode('pips');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
+
+updatePriceInputs();
 </script>
 </body>
 </html>
